@@ -2,4 +2,5 @@
 
 <template>
   <div class="container bg-primary text-white">Bootstrap is working.</div>
+  <RouterView />
 </template>
