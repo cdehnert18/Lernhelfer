@@ -14,7 +14,7 @@ const router = createRouter({
     },
     {
       path: '/learn',
-      name: 'lern',
+      name: 'learn',
       component: LernView,
     },
     {
