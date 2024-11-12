@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.8.3">
+  <diagram id="I359MItvWsh4OVZl2oIO" name="Seite-1">
+    <mxGraphModel dx="1434" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="100" width="340" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-3" value="&lt;h1&gt;&lt;font style=&quot;font-size: 27px;&quot;&gt;Lernhelfer&lt;/font&gt;&lt;/h1&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="100" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-4" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="560" width="340" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-5" value="" style="points=[[0.145,0.145,0],[0.5,0,0],[0.855,0.145,0],[1,0.5,0],[0.855,0.855,0],[0.5,1,0],[0.145,0.855,0],[0,0.5,0]];shape=mxgraph.bpmn.event;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=ellipsePerimeter;outlineConnect=0;aspect=fixed;outline=standard;symbol=timer;" parent="1" vertex="1">
+          <mxGeometry x="258.75" y="570.63" width="27.5" height="27.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-67" value="" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.calendar" parent="1" vertex="1">
+          <mxGeometry x="344.38" y="574" width="26.25" height="21.53" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-70" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.add;" parent="1" vertex="1">
+          <mxGeometry x="516.25" y="575.63" width="22.5" height="22.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-73" value="Timer" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="242.5" y="595.53" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-74" value="Lernplan" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="327.5" y="595.53" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-75" value="Hinzufügen" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="497.5" y="595.53" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-13" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400.01" y="560" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-77" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn0.iconfinder.com/data/icons/job-seeker/256/test_job_seeker_employee_unemployee_work-128.png" parent="1" vertex="1">
+          <mxGeometry x="426.75" y="571.13" width="31.5" height="31.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ifa1-IcgKsluYtl1UEuV-78" value="Prüfungsplan" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="412.5" y="595.53" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-2" value="Montag, 01.01.2025" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="250" y="210" width="131.25" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-3" value="&amp;nbsp; 11:00-12:00 - Programmierung" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;" parent="1" vertex="1">
+          <mxGeometry x="270" y="240" width="270" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-5" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/basket-128.png" parent="1" vertex="1">
+          <mxGeometry x="468.75" y="252" width="38" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-13" value="Dienstag, 02.01.2025" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="245" y="310" width="141.25" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-17" value="&amp;nbsp; 13:00-14:30 - Mathematik" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;" parent="1" vertex="1">
+          <mxGeometry x="270" y="440" width="270" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-19" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/basket-128.png" parent="1" vertex="1">
+          <mxGeometry x="465" y="451" width="38" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="KK-5Z-vk3ZXW3KGRnpWN-20" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;shadow=0;dashed=0;strokeWidth=2;shape=mxgraph.ios7.misc.scroll_(vertical);fillColor=#a0a0a0;" parent="1" vertex="1">
+          <mxGeometry x="551.5" y="230" width="6" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-1" value="&amp;nbsp; 8:00-10:00 - GDI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;" vertex="1" parent="1">
+          <mxGeometry x="268.75" y="340" width="270" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-2" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/basket-128.png" vertex="1" parent="1">
+          <mxGeometry x="467.5" y="352" width="38" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-4" value="Freitag, 05.01.2025" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="410" width="141.25" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-9" value="" style="strokeColor=#999999;verticalLabelPosition=bottom;shadow=0;dashed=0;verticalAlign=top;strokeWidth=2;html=1;shape=mxgraph.mockup.misc.editIcon;" vertex="1" parent="1">
+          <mxGeometry x="505.5" y="256" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-10" value="" style="strokeColor=#999999;verticalLabelPosition=bottom;shadow=0;dashed=0;verticalAlign=top;strokeWidth=2;html=1;shape=mxgraph.mockup.misc.editIcon;" vertex="1" parent="1">
+          <mxGeometry x="505" y="356" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rY3xB4cPp5pABSBBmHks-11" value="" style="strokeColor=#999999;verticalLabelPosition=bottom;shadow=0;dashed=0;verticalAlign=top;strokeWidth=2;html=1;shape=mxgraph.mockup.misc.editIcon;" vertex="1" parent="1">
+          <mxGeometry x="506.75" y="455" width="30" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
