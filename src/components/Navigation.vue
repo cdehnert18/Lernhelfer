@@ -1,44 +1,27 @@
 <template>
-    <div class="navbar rounded-3 mb-2 d-flex p-1">
-        <button @click="changePage('timer')" :class="{ 'btn-outline-primary': page === 'timer' }" class="btn flex-fill">Timer</button>
-        <button @click="changePage('lernplan')" :class="{ 'btn-outline-primary': page === 'lernplan' }" class="btn flex-fill">Lernplan</button>
-        <button @click="changePage('pruefungsplan')" :class="{ 'btn-outline-primary': page === 'pruefungsplan' }" class="btn flex-fill">Prüfungsplan</button>
-        <button @click="changePage('add')" :class="{ 'btn-outline-primary': page === 'add' }" class="btn flex-fill">Hinzufügen</button>
-    </div>
+  <nav class="navbar navbar-expand">
+    <ul class="navbar-nav d-flex justify-content-around w-100">
+      <li class="nav-item" v-for="link in navLinks" :key="link.to">
+        <RouterLink :to="link.to" class="nav-link" active-class="active">
+          {{ link.label }}
+        </RouterLink>
+      </li>
+    </ul>
+  </nav>
 </template>
 
-<script>
-    export default {
-        name: 'Navigation',
-        data() {
-            return {
-                page: 'timer'
-            };
-        },
-        methods: {
-            changePage(page) {
-                this.page = page;
-                switch (page) {
-                    case 'timer':
-                        this.$router.push({ name: 'timer' });
-                        break;
-                    case 'lernplan':
-                        this.$router.push({ name: 'learn' });
-                        break;
-                    case 'pruefungsplan':
-                        this.$router.push({ name: 'pruefung' });
-                        break;
-                    case 'add':
-                        this.$router.push({ name: 'hinzufuegen' });
-                        break;
-                }
-            }
-        }
+<script lang="ts">
+export default {
+  name: 'NavigationComponent',
+  data() {
+    return {
+      navLinks: [
+        { to: '/learn', label: 'Lernplan' },
+        { to: '/', label: 'Timer' },
+        { to: '/pruefung', label: 'Prüfungen' },
+        { to: '/add', label: 'Hinzufügen' },
+      ],
     }
+  },
+}
 </script>
-
-<style scoped>
-    .navbar {
-        height: 50px;
-    }
-</style>
