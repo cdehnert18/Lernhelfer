@@ -4,7 +4,9 @@ import Navigation from '@/components/Navigation.vue'
 
 <template>
   <div class="d-flex flex-column min-vh-100">
-    <RouterView class="flex-grow-1" />
+    <div class="flex-grow-1">
+      <RouterView class="flex-grow-1" />
+    </div>
     <Navigation class="sticky-bottom bg-dark" />
   </div>
 </template>
