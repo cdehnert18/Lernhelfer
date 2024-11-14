@@ -6,7 +6,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="container border border-tertiary text-light rounded shadow p-3">
+  <div
+    class="container border border-tertiary bg-body-secondary rounded shadow p-3"
+  >
     <div class="row align-items-center">
       <div class="col">
         <h6>{{ pruefung }}</h6>
