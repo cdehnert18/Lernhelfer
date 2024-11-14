@@ -7,7 +7,7 @@
       </div>
       <div class="col-auto d-flex gap-2">
         <button class="btn btn-danger">Löschen</button>
-        <button class="btn btn-success">Start</button>
+        <router-link to="/" class="btn btn-success">Start</router-link>
       </div>
     </div>
   </div>
