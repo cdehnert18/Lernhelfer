@@ -1,11 +1,14 @@
 <template>
-  <div class="d-flex flex-column p-4 justify-content-between page">
+  <div class="d-flex flex-column p-4 justify-content-between" style="height: 92vh;">
     <h1>Timer</h1>
     
     <div class="d-flex justify-content-center align-items-center h-75" style="position: relative;">
-        <div class="rounded-circle bg-light h-50 timer"></div>
-        <div class="time text-primary">2:30</div>
-        <div class="test" style="height: 55%; --percentage: 30;"></div>
+        <!-- Hintergrundkreis -->
+        <div class="rounded-circle z-1 bg-light h-50 aspect-ratio-1"></div>
+        <!-- Timertext -->
+        <div class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary">2:30</div>
+        <!-- Kreissegment -->
+        <div class="aspect-ratio-1 circle-piece rounded-circle position-absolute" style="height: 55%; --percentage: 30;"></div>
     </div>
     <div>
       <div value='20' class="progress">
@@ -17,24 +20,10 @@
 </template>
 
 <style scoped>
-  .timer {
+  .aspect-ratio-1 {
     aspect-ratio: 1;
-    z-index: 3;
   }
-  .page{
-    height: 92vh;
-  }
-  .test{
-    aspect-ratio: 1;
-    border-radius: 100%;
-    position: absolute;
-    z-index: 1;
+  .circle-piece{
     background: conic-gradient(#007bff calc(var(--percentage) * 1%), lightgray 0);
-  }
-  .time{
-    z-index: 4;
-    font-weight: bold;
-    font-size: 2rem;
-    position: absolute;
   }
 </style>
