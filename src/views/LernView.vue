@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import LearningDay from '@/components/LearningDay.vue'
+</script>
+
 <template>
-  <h1>Lernplan</h1>
+  <LearningDay v-for="n in 3" :key="n"></LearningDay>
 </template>
