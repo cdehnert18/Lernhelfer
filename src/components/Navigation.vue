@@ -16,8 +16,8 @@ export default {
   data() {
     return {
       navLinks: [
-        { to: '/learn', label: 'Lernplan' },
         { to: '/', label: 'Timer' },
+        { to: '/learn', label: 'Lernplan' },
         { to: '/pruefung', label: 'Prüfungen' },
         { to: '/add', label: 'Hinzufügen' },
       ],
