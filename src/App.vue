@@ -7,6 +7,6 @@ import Navigation from '@/components/Navigation.vue'
     <div class="flex-grow-1">
       <RouterView class="flex-grow-1" />
     </div>
-    <Navigation class="sticky-bottom bg-dark" />
+    <Navigation class="sticky-bottom bg-secondary-subtle" />
   </div>
 </template>
