@@ -10,6 +10,12 @@ import LearningUnit from '@/components/LearningUnit.vue'
     </div>
   </header>
   <main class="px-4">
-    <LearningUnit v-for="n in 3" :key="n" class="mb-3"></LearningUnit>
+    <LearningUnit
+      v-for="n in 3"
+      :key="n"
+      class="mb-3"
+      pruefung="Deutsch"
+      :lerndauer="45"
+    ></LearningUnit>
   </main>
 </template>
