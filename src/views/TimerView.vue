@@ -10,9 +10,15 @@
         <!-- Kreissegment -->
         <div class="aspect-ratio-1 circle-piece rounded-circle position-absolute" style="height: 55%; --percentage: 30;"></div>
     </div>
-    <div>
-      <div value='20' class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100">25%</div>
+    <div class="d-flex justify-content-center">
+      <div class="progress w-75 position-relative">
+        <div class="progress-bar fw-bold user-select-none" role="progressbar" style="width: 60%;" aria-valuemin="0" aria-valuemax="100">1:15</div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 21.7%;"></div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 26.05%;"></div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 47.75%;"></div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 52.1%;"></div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 73.8%;"></div>
+        <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 78.15%;"></div>
       </div>
     </div>
   </div>
