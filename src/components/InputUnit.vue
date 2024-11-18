@@ -12,8 +12,8 @@ const inputValue = ref('');
 </script>
 
 <template>
-    <div class="form-group mb-3">
+    <div class="d-flex flex-column" style="width: 80%;">
         <label for="inputField" class="form-label">{{ label }}</label>
-        <input id="inputField" v-model="inputValue" :type="inputType" :placeholder="placeholder" />
+        <input id="inputField"  class="form-control" v-model="inputValue" :type="inputType" :placeholder="placeholder" />
     </div>
 </template>
