@@ -24,33 +24,40 @@ const rawPruefungen = [
   },
 ]
 
-const groupedPruefungen = rawPruefungen.reduce((acc, pruefung) => {
-  // Extrahiere das Datum (ohne Uhrzeit) als Date-Objekt
-  const datum = new Date(pruefung.start.toISOString().split('T')[0])  // '2024-12-03' als Date-Objekt
+const groupedPruefungen = rawPruefungen.reduce(
+  (acc, pruefung) => {
+    // Extrahiere das Datum (ohne Uhrzeit) als Date-Objekt
+    const datum = new Date(pruefung.start.toISOString().split('T')[0]) // '2024-12-03' als Date-Objekt
 
-  // Suche nach einem bestehenden Datumseintrag (Vergleich mit Date)
-  const existingEntry = acc.find((entry) => entry.datum.getTime() === datum.getTime())  // Vergleiche mit .getTime()
+    // Suche nach einem bestehenden Datumseintrag (Vergleich mit Date)
+    const existingEntry = acc.find(
+      entry => entry.datum.getTime() === datum.getTime(),
+    ) // Vergleiche mit .getTime()
 
-  if (existingEntry) {
-    // Datum existiert bereits: Füge die Prüfung hinzu
-    existingEntry.pruefungen.push(pruefung)
-  } else {
-    // Neues Datum: Erstelle einen neuen Eintrag
-    acc.push({
-      datum: datum,  // datum als Date
-      pruefungen: [pruefung],
-    })
-  }
+    if (existingEntry) {
+      // Datum existiert bereits: Füge die Prüfung hinzu
+      existingEntry.pruefungen.push(pruefung)
+    } else {
+      // Neues Datum: Erstelle einen neuen Eintrag
+      acc.push({
+        datum: datum, // datum als Date
+        pruefungen: [pruefung],
+      })
+    }
 
-  return acc
-}, [] as { datum: Date; pruefungen: typeof rawPruefungen }[])  // Datum als Date im Accumulator
+    return acc
+  },
+  [] as { datum: Date; pruefungen: typeof rawPruefungen }[],
+) // Datum als Date im Accumulator
 </script>
 
 <template>
-  <ExamDay
-    v-for="(pruefungstag, index) in groupedPruefungen"
-    :key="index"
-    :datum="pruefungstag.datum"
-    :pruefungen="pruefungstag.pruefungen"
-  />
+  <div>
+    <ExamDay
+      v-for="(pruefungstag, index) in groupedPruefungen"
+      :key="index"
+      :datum="pruefungstag.datum"
+      :pruefungen="pruefungstag.pruefungen"
+    />
+  </div>
 </template>
