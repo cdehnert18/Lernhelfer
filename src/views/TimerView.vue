@@ -3,24 +3,32 @@ export default {
   name: "TimerView",
   data() {
     return {
-      timerRunning: false,
       timerTime: 0,
       timerString: "00:00:00",
       timerProgress: 0,
-      timerID: null
+      timerID: null,
+      pomodoro: [1500, 300, 1500, 300, 1500, 300, 1500],
+      pomodoroIndex: 0
     };
   },
   methods: {
-    timerStart() {
-      if (!this.timerRunning) {
-        this.timerRunning = true;
-        this.timerID = setInterval(() => {
-          this.timerTime += 1;
-          this.buildTimerString();
-          this.timerProgress = this.timerTime / 2000 * 100;
-          if (this.timerTime >= 2000)this.timerStop();
-        }, 1000);
-      }
+    toggleTimer() {
+      if (!this.timerID) 
+        this.timerStart();
+      else
+        this.timerPause();
+    },
+    timerStart(){
+      this.timerID = setInterval(() => {
+        this.timerTime += 100;
+        this.buildTimerString();
+        this.timerProgress = this.timerTime / 6900 * 100;
+        if (this.timerTime >= 2000)this.timerStop();
+      }, 1000);
+    },
+    timerPause(){
+      clearInterval(this.timerID);
+      this.timerID = null;
     },
     timerStop(){
       this.timerRunning = false;
@@ -45,7 +53,7 @@ export default {
     
     <div class="d-flex justify-content-center align-items-center h-75" style="position: relative;">
         <!-- Hintergrundkreis -->
-        <div class="rounded-circle z-1 bg-light h-50 aspect-ratio-1" @click="timerStart"></div>
+        <div class="rounded-circle z-1 bg-light h-50 aspect-ratio-1" @click="toggleTimer"></div>
         <!-- Timertext -->
         <div class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary">{{timerString}}</div>
         <!-- Kreissegment -->
@@ -53,7 +61,7 @@ export default {
     </div>
     <div class="d-flex justify-content-center">
       <div class="progress w-75 position-relative">
-        <div class="progress-bar fw-bold user-select-none" role="progressbar" style="width: 60%;">1:15</div>
+        <div class="progress-bar fw-bold user-select-none" role="progressbar" :style="{width: `${timerProgress}%`}">1:15</div>
         <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 21.7%;"></div>
         <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 26.05%;"></div>
         <div class="h-100 bg-light position-absolute" style="width: 0.25em; left: 47.75%;"></div>
