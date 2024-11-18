@@ -36,10 +36,12 @@ const learningDays = [
 </script>
 
 <template>
-  <LearningDay
-    v-for="(day, index) in learningDays"
-    :key="index"
-    :datum="new Date(day.datum)"
-    :lerneinheiten="day.lerneinheiten"
-  />
+  <div>
+    <LearningDay
+      v-for="(day, index) in learningDays"
+      :key="index"
+      :datum="new Date(day.datum)"
+      :lerneinheiten="day.lerneinheiten"
+    />
+  </div>
 </template>
