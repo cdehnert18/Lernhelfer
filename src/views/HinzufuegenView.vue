@@ -2,10 +2,11 @@
 import InputUnit from '@/components/InputUnit.vue'
 const options = [{ text: 'leicht' }, { text: 'mittel' }, { text: 'schwer' }]
 const inputUnits = [
-  { label: 'Name', inputType: 'text', placeholder: 'Prüfungsname' },
-  { label: 'Datum', inputType: 'date', placeholder: 'Prüfungsdatum' },
-  { label: 'Arbeitsaufwand', inputType: 'number', placeholder: 'Aufwand in Stunden' },
-  { label: 'Lernbeginn', inputType: 'date', placeholder: 'Datum' }
+  { label: 'Prüfungsname', inputType: 'text', placeholder: 'z.B. Mathematik 1' },
+  { label: 'Prüfungsdatum', inputType: 'date', placeholder: '' },
+  { label: 'Uhrzeit', inputType: 'time', placeholder: '' },
+  { label: 'Arbeitsaufwand', inputType: 'number', placeholder: 'z.B. 20' },
+  { label: 'Lernbeginn', inputType: 'date', placeholder: '' }
 ]
 </script>
 
