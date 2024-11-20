@@ -11,15 +11,23 @@ const props = defineProps<{
   zeitraumStart: Date
 }>()
 
+function deletePruefung() {
+  const pruefungen = JSON.parse(localStorage.getItem('pruefungen') || '[]')
+
+  const updatedPruefungen = pruefungen.filter(
+    (item: { fach: string; date: string }) =>
+      item.fach !== props.pruefung ||
+      new Date(item.date).getTime() !== props.zeitraumStart.getTime(),
+  )
+
+  localStorage.setItem('pruefungen', JSON.stringify(updatedPruefungen))
+}
+
 const zeitraum = computed(() => {
-  const hoursStart = props.zeitraumStart.getHours().toString().padStart(2, '0')
-  const minutesStart = props.zeitraumStart
+  return `${props.zeitraumStart.getHours().toString().padStart(2, '0')}:${props.zeitraumStart
     .getMinutes()
     .toString()
-    .padStart(2, '0')
-  const zeitraum = `${hoursStart}:${minutesStart}`
-
-  return zeitraum
+    .padStart(2, '0')}`
 })
 </script>
 
@@ -33,7 +41,7 @@ const zeitraum = computed(() => {
         <small>{{ zeitraum }}</small>
       </div>
       <div class="col-auto d-flex gap-2">
-        <button class="btn btn-danger">Löschen</button>
+        <button class="btn btn-danger" @click="deletePruefung">Löschen</button>
         <router-link to="/" class="btn btn-success">Bearbeiten</router-link>
       </div>
     </div>
