@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, defineProps } from 'vue'
+import { computed, watch, ref, defineProps, defineEmits } from 'vue'
 import Exam from '@/components/Exam.vue'
 
 const emit = defineEmits<{
@@ -14,10 +14,26 @@ const props = defineProps<{
   }[]
 }>()
 
-const pruefungen = ref(props.pruefungen)
+// Erstelle eine reaktive Kopie von `props.pruefungen`
+const pruefungen = ref([...props.pruefungen])
+
+// Reagiere auf Änderungen der Prop `pruefungen`
+watch(
+  () => props.pruefungen,
+  newPruefungen => {
+    pruefungen.value = [...newPruefungen] // Aktualisiere die lokale Kopie
+  },
+  { immediate: true }, // Direkt initialisieren
+)
 
 function onExamDeleted(fach: string, date: Date) {
   emit('examDeleted', fach, date)
+
+  // Lokal die gelöschte Prüfung entfernen
+  pruefungen.value = pruefungen.value.filter(
+    pruefung =>
+      pruefung.fach !== fach || pruefung.date.getTime() !== date.getTime(),
+  )
 }
 
 const wochentag = computed(() => {
