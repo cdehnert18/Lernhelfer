@@ -7,7 +7,6 @@ const props = defineProps<{
   pruefungen: {
     fach: string
     start: Date
-    ende: Date
   }[]
 }>()
 
@@ -40,7 +39,6 @@ const wochentag = computed(() => {
       class="mb-3"
       :pruefung="pruefung.fach"
       :zeitraumStart="pruefung.start"
-      :zeitraumEnde="pruefung.ende"
     ></Exam>
   </main>
 </template>

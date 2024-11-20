@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 defineComponent({
   name: 'ExamComponent',
@@ -9,15 +9,15 @@ defineComponent({
 const props = defineProps<{
   pruefung: string
   zeitraumStart: Date
-  zeitraumEnde: Date
 }>()
 
 const zeitraum = computed(() => {
-  const hoursStart = props.zeitraumStart.getHours().toString().padStart(2, '0');
-  const minutesStart = props.zeitraumStart.getMinutes().toString().padStart(2, '0');
-  const hoursEnde = props.zeitraumEnde.getHours().toString().padStart(2, '0');
-  const minutesEnde = props.zeitraumEnde.getMinutes().toString().padStart(2, '0');
-  const zeitraum = `${hoursStart}:${minutesStart} - ${hoursEnde}:${minutesEnde}`;
+  const hoursStart = props.zeitraumStart.getHours().toString().padStart(2, '0')
+  const minutesStart = props.zeitraumStart
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')
+  const zeitraum = `${hoursStart}:${minutesStart}`
 
   return zeitraum
 })
