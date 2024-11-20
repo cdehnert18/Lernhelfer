@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { defineComponent } from 'vue'
+import { computed, defineComponent, defineEmits } from 'vue'
 
 defineComponent({
   name: 'ExamComponent',
 })
+
+const emit = defineEmits<{
+  (event: 'examDeleted', fach: string, date: Date): void
+}>()
 
 const props = defineProps<{
   pruefung: string
@@ -12,15 +15,7 @@ const props = defineProps<{
 }>()
 
 function deletePruefung() {
-  const pruefungen = JSON.parse(localStorage.getItem('pruefungen') || '[]')
-
-  const updatedPruefungen = pruefungen.filter(
-    (item: { fach: string; date: string }) =>
-      item.fach !== props.pruefung ||
-      new Date(item.date).getTime() !== props.zeitraumStart.getTime(),
-  )
-
-  localStorage.setItem('pruefungen', JSON.stringify(updatedPruefungen))
+  emit('examDeleted', props.pruefung, props.zeitraumStart)
 }
 
 const zeitraum = computed(() => {

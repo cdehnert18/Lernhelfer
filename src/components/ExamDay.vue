@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, defineProps } from 'vue'
 import Exam from '@/components/Exam.vue'
+
+const emit = defineEmits<{
+  (event: 'examDeleted', fach: string, date: Date): void
+}>()
 
 const props = defineProps<{
   datum: Date
@@ -9,6 +13,12 @@ const props = defineProps<{
     date: Date
   }[]
 }>()
+
+const pruefungen = ref(props.pruefungen)
+
+function onExamDeleted(fach: string, date: Date) {
+  emit('examDeleted', fach, date)
+}
 
 const wochentag = computed(() => {
   const wochentage = [
@@ -34,11 +44,12 @@ const wochentag = computed(() => {
   </header>
   <main class="px-4">
     <Exam
-      v-for="(pruefung, index) in props.pruefungen"
+      v-for="(pruefung, index) in pruefungen"
       :key="index"
       class="mb-3"
       :pruefung="pruefung.fach"
       :zeitraumStart="pruefung.date"
+      @examDeleted="onExamDeleted"
     ></Exam>
   </main>
 </template>

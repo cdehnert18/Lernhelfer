@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import ExamDay from '@/components/ExamDay.vue'
 
 interface Pruefung {
@@ -16,32 +17,41 @@ function getLocalStorageData(): Pruefung[] {
     : []
 }
 
-const rawPruefungen = getLocalStorageData().map(pruefung => ({
-  fach: pruefung.fach,
-  date: new Date(pruefung.date),
-}))
+const pruefungen = ref<Pruefung[]>(getLocalStorageData())
 
-const groupedPruefungen = rawPruefungen.reduce(
-  (acc, pruefung) => {
-    const datum = new Date(pruefung.date.toISOString().split('T')[0])
-    
-    const existingEntry = acc.find(
-      entry => entry.datum.getTime() === datum.getTime(),
-    )
+// Prüfungen nach Datum gruppieren
+const groupedPruefungen = computed(() => {
+  return pruefungen.value.reduce(
+    (acc, pruefung) => {
+      const datum = new Date(pruefung.date.toISOString().split('T')[0])
 
-    if (existingEntry) {
-      existingEntry.pruefungen.push(pruefung)
-    } else {
-      acc.push({
-        datum: datum,
-        pruefungen: [pruefung],
-      })
-    }
+      const existingEntry = acc.find(
+        entry => entry.datum.getTime() === datum.getTime(),
+      )
 
-    return acc
-  },
-  [] as { datum: Date; pruefungen: typeof rawPruefungen }[],
-)
+      if (existingEntry) {
+        existingEntry.pruefungen.push(pruefung)
+      } else {
+        acc.push({
+          datum: datum,
+          pruefungen: [pruefung],
+        })
+      }
+
+      return acc
+    },
+    [] as { datum: Date; pruefungen: Pruefung[] }[],
+  )
+})
+
+function handleExamDeleted(fach: string, date: Date) {
+  pruefungen.value = pruefungen.value.filter(
+    pruefung =>
+      pruefung.fach !== fach || pruefung.date.getTime() !== date.getTime(),
+  )
+
+  localStorage.setItem('pruefungen', JSON.stringify(pruefungen.value))
+}
 </script>
 
 <template>
@@ -51,6 +61,7 @@ const groupedPruefungen = rawPruefungen.reduce(
       :key="index"
       :datum="pruefungstag.datum"
       :pruefungen="pruefungstag.pruefungen"
+      @examDeleted="handleExamDeleted"
     />
   </div>
 </template>
