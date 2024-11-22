@@ -88,8 +88,13 @@ export default {
 <template>
   <div class="d-flex flex-column p-4 justify-content-between" style="height: 92vh;">
     <h1>Timer</h1>
-
-    <div class="d-flex justify-content-center align-items-center h-75" style="position: relative;">
+    <div class="d-flex justify-content-center" style="margin-top: 20px">
+      <select class="form-select w-25">
+        <option selected>Mathematik</option>
+        <option>Geschichte</option>
+      </select>
+    </div>
+    <div class="d-flex justify-content-center align-items-center h-75" style="position: relative">
       <!-- Hintergrundkreis -->
       <div class="rounded-circle z-1 bg-light h-50 aspect-ratio-1" @click="toggleTimer"></div>
       <!-- Timertext -->
@@ -104,7 +109,9 @@ export default {
         }"
       ></div>
     </div>
+    
 
+    <!-- Fortschrittsbalken des Lerblockes-->
     <div class="d-flex justify-content-center">
       <div class="progress w-75 position-relative">
         <div
