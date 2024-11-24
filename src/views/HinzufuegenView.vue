@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from '@/router'
 import { ref } from 'vue'
 
 const formData = ref({
@@ -20,6 +21,7 @@ function save() {
 
   gespeichertePruefungen.push(neuePruefung)
   localStorage.setItem('pruefungen', JSON.stringify(gespeichertePruefungen))
+  router.push('/pruefung')
 }
 </script>
 
