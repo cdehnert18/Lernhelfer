@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, defineEmits } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 defineComponent({
   name: 'ExamComponent',

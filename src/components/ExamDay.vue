@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, ref, defineProps, defineEmits } from 'vue'
+import { computed, watch, ref } from 'vue'
 import Exam from '@/components/Exam.vue'
 
 const emit = defineEmits<{
