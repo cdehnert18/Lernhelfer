@@ -7,17 +7,14 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  datum: Date
   pruefungen: {
     fach: string
     date: Date
   }[]
 }>()
 
-// Erstelle eine reaktive Kopie von `props.pruefungen`
 const pruefungen = ref([...props.pruefungen])
 
-// Reagiere auf Änderungen der Prop `pruefungen`
 watch(
   () => props.pruefungen,
   newPruefungen => {
@@ -46,7 +43,7 @@ const wochentag = computed(() => {
     'Freitag',
     'Samstag',
   ]
-  const dayIndex = props.datum.getDay()
+  const dayIndex = props.pruefungen[0].date.getDay()
   return wochentage[dayIndex]
 })
 </script>
@@ -55,7 +52,7 @@ const wochentag = computed(() => {
   <header class="px-4 mt-2 mb-2">
     <div class="container px-0">
       <h4>{{ wochentag }}</h4>
-      <h6>{{ props.datum.toLocaleDateString('de-DE') }}</h6>
+      <h6>{{ props.pruefungen[0].date.toLocaleDateString('de-DE') }}</h6>
     </div>
   </header>
   <main class="px-4">

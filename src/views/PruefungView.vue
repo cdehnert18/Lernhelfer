@@ -59,7 +59,6 @@ function handleExamDeleted(fach: string, date: Date) {
     <ExamDay
       v-for="(pruefungstag, index) in groupedPruefungen"
       :key="index"
-      :datum="pruefungstag.datum"
       :pruefungen="pruefungstag.pruefungen"
       @examDeleted="handleExamDeleted"
     />
