@@ -1,6 +1,10 @@
--Prüfung gewichten, um Puffer zu berechnen
--man stellt Anfangsdatum ein und Programm rechnet aus, wie viel man pro Tag lernt
--im Kalender können Lernsessions gelöscht werden, dafür wird der Puffer verkleinert, bzw. wenn Puffer leer Lernzeit/Tag höher
+Algorithmus um Lernplan zu erstellen in Pseudocode. 
+Problem: bei gleichmäßiger Verteilung innerhalb des Fachs kann es 
+insgesamt zu ungleicher Verteilung kommen
+Bsp:
+        Mo  Di  Mi  Do  Fr  Sa  So  Mo  Di  Mi
+Eng     2   2   2   2   2   2   2
+Mathe               4   4   4   4   4   4   4
 
 
 //Prüfung hinzufügen
@@ -29,9 +33,12 @@
     //Lernzeit pro Tag initialisieren
     prüfung.lernzeitProTag = (prüfung.lernzeit + prüfung.puffer) / prüfung.tage;
 
+    //evtl. Lernzeit verteilen
+    lernzeitVerteilen();
 
 
-//Lernblock löschen 
+
+//Lernblock löschen
     //Lernzeit pro Tag für jeweilige Prüfung neu ausrechnen
         if (prüfung.lernzeitProTag <= prüfung.puffer)
             prüfung.puffer -= prüfung.lernzeitProTag;
@@ -41,7 +48,12 @@
             prüfung.puffer = 0h;
         }
 
-function lernzeitGlätten()
+    //evtl. Lernzeit verteilen
+    lernzeitVerteilen();
+
+
+
+function lernzeitVerteilen()    //nur Prototyp, evtl. noch nicht ganz ausgereift
 {
     //Tage nach Lernzeit sortieren
     tage.sort((a, b) => a.lernzeit - b.lernzeit);
@@ -78,8 +90,3 @@ function umverteilungPrüfen(tagMaxStuden,tagMinStunden,ausgleich){
     }
     return false;
 }
-    
-
-        Mo  Di  Mi  Do  Fr  Sa  So  Mo  Di  Mi
-Eng     2   2   2   2   2   2   2
-Mathe               4   4   4   4   4   4   4
