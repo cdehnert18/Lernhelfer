@@ -11,6 +11,10 @@ const formData = ref({
 })
 
 function save() {
+  if (!formData.value.name || !formData.value.date || !formData.value.workload || !formData.value.startLearning) {
+    alert('Bitte füllen Sie alle erforderlichen Felder aus.')
+    return
+  }
   const neuePruefung = {
     fach: formData.value.name,
     date: formData.value.date,
