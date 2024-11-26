@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import Navigation from '@/components/Navigation.vue'
+import Navigation from '@/components/Navigation.vue';
+import { onMounted, onBeforeUnmount } from 'vue';
+
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  event.returnValue = "a";
+}
+
+onMounted(() => {
+  window.addEventListener("beforeunload", handleBeforeUnload);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeunload", handleBeforeUnload);
+});
 </script>
 
 <template>
