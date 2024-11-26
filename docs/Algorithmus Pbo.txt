@@ -1,0 +1,85 @@
+-Prüfung gewichten, um Puffer zu berechnen
+-man stellt Anfangsdatum ein und Programm rechnet aus, wie viel man pro Tag lernt
+-im Kalender können Lernsessions gelöscht werden, dafür wird der Puffer verkleinert, bzw. wenn Puffer leer Lernzeit/Tag höher
+
+
+//Prüfung hinzufügen
+    //Puffer initialisieren
+    switch (schwierigkeit)
+    {
+        case 'leicht':
+            prüfung.puffer = 2h;
+            break;
+        case 'mittel':
+            prüfung.puffer = 4h;
+            break;
+        case 'schwer':
+            prüfung.puffer = 6h;
+            break;
+    }
+
+    //Tage initialisieren
+    if (aktuellesDatum < startdatum)
+        prüfung.tage = prüfung.datum - prüfung.startdatum;
+    else
+        prüfung.tage = prüfung.datum - aktuellesDatum;
+    if (prüfung.Uhrzeit < 12Uhr)
+        prüfung.tage--;
+
+    //Lernzeit pro Tag initialisieren
+    prüfung.lernzeitProTag = (prüfung.lernzeit + prüfung.puffer) / prüfung.tage;
+
+
+
+//Lernblock löschen 
+    //Lernzeit pro Tag für jeweilige Prüfung neu ausrechnen
+        if (prüfung.lernzeitProTag <= prüfung.puffer)
+            prüfung.puffer -= prüfung.lernzeitProTag;
+        else
+        {
+            prüfung.lernzeitProTag = prüfung.lernzeit / prüfung.tage;
+            prüfung.puffer = 0h;
+        }
+
+function lernzeitGlätten()
+{
+    //Tage nach Lernzeit sortieren
+    tage.sort((a, b) => a.lernzeit - b.lernzeit);
+
+    anzahlTage=tage.length;
+    for(anzahlTage)
+    {
+        niedriegsterTag;
+        tagMaxStunden=tage[anzahlTage-1];
+        while(1)
+        {
+            tagMinStunden=tage[niedriegsterTag];
+            ausgleich = (tagMaxStunden.lernzeit - tagMinStunden.lernzeit)/2;
+            if(umverteilungPrüfen(tagMaxStuden,tagMinStunden,ausgleich))
+                break;
+            niedriegsterTag++;
+            if (niedriegsterTag == anzahlTage -1)
+                break;
+        }
+        //Tage nach Lernzeit sortieren
+        tage.sort((a, b) => a.lernzeit - b.lernzeit);
+    }
+}
+
+function umverteilungPrüfen(tagMaxStuden,tagMinStunden,ausgleich){
+    for(lerneinheit in tageMaxStunden)
+    {
+        if(ausgleich <= lerneinheit.lernzeit && tagMinStunden between(prüfung.startdatum,prüfung.datum))
+        {
+            tage.letztesElement.lernzeit -= ausgleich;
+            tage.erstesElement.lernzeit += ausgleich;
+            return true;
+        }
+    }
+    return false;
+}
+    
+
+        Mo  Di  Mi  Do  Fr  Sa  So  Mo  Di  Mi
+Eng     2   2   2   2   2   2   2
+Mathe               4   4   4   4   4   4   4
