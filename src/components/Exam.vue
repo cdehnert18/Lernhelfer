@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue'
 
 defineComponent({
   name: 'ExamComponent',
 })
 
+const emit = defineEmits<{
+  (event: 'examDeleted', fach: string, date: Date): void
+}>()
+
 const props = defineProps<{
   pruefung: string
   zeitraumStart: Date
-  zeitraumEnde: Date
 }>()
 
-const zeitraum = computed(() => {
-  const hoursStart = props.zeitraumStart.getHours().toString().padStart(2, '0');
-  const minutesStart = props.zeitraumStart.getMinutes().toString().padStart(2, '0');
-  const hoursEnde = props.zeitraumEnde.getHours().toString().padStart(2, '0');
-  const minutesEnde = props.zeitraumEnde.getMinutes().toString().padStart(2, '0');
-  const zeitraum = `${hoursStart}:${minutesStart} - ${hoursEnde}:${minutesEnde}`;
+function deletePruefung() {
+  emit('examDeleted', props.pruefung, props.zeitraumStart)
+}
 
-  return zeitraum
+const zeitraum = computed(() => {
+  return `${props.zeitraumStart.getHours().toString().padStart(2, '0')}:${props.zeitraumStart
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}`
 })
 </script>
 
@@ -33,7 +36,7 @@ const zeitraum = computed(() => {
         <small>{{ zeitraum }}</small>
       </div>
       <div class="col-auto d-flex gap-2">
-        <button class="btn btn-danger">Löschen</button>
+        <button class="btn btn-danger" @click="deletePruefung">Löschen</button>
         <router-link to="/" class="btn btn-success">Bearbeiten</router-link>
       </div>
     </div>

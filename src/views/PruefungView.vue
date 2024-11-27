@@ -1,54 +1,57 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import ExamDay from '@/components/ExamDay.vue'
 
-const rawPruefungen = [
-  {
-    fach: 'Geschichte 1',
-    start: new Date('2024-12-03T16:00:00'),
-    ende: new Date('2024-12-03T17:30:00'),
-  },
-  {
-    fach: 'Geschichte 2',
-    start: new Date('2024-12-03T19:00:00'),
-    ende: new Date('2024-12-03T21:30:00'),
-  },
-  {
-    fach: 'Mathematik',
-    start: new Date('2024-12-05T10:45:00'),
-    ende: new Date('2024-12-05T11:30:00'),
-  },
-  {
-    fach: 'Literatur',
-    start: new Date('2024-12-15T14:00:00'),
-    ende: new Date('2024-12-15T15:30:00'),
-  },
-]
+interface Pruefung {
+  fach: string
+  date: Date
+}
 
-const groupedPruefungen = rawPruefungen.reduce(
-  (acc, pruefung) => {
-    // Extrahiere das Datum (ohne Uhrzeit) als Date-Objekt
-    const datum = new Date(pruefung.start.toISOString().split('T')[0]) // '2024-12-03' als Date-Objekt
+function getLocalStorageData(): Pruefung[] {
+  const data = localStorage.getItem('pruefungen')
+  return data
+    ? JSON.parse(data).map((item: { fach: string; date: string }) => ({
+        fach: item.fach,
+        date: new Date(item.date),
+      }))
+    : []
+}
 
-    // Suche nach einem bestehenden Datumseintrag (Vergleich mit Date)
-    const existingEntry = acc.find(
-      entry => entry.datum.getTime() === datum.getTime(),
-    ) // Vergleiche mit .getTime()
+const pruefungen = ref<Pruefung[]>(getLocalStorageData())
 
-    if (existingEntry) {
-      // Datum existiert bereits: Füge die Prüfung hinzu
-      existingEntry.pruefungen.push(pruefung)
-    } else {
-      // Neues Datum: Erstelle einen neuen Eintrag
-      acc.push({
-        datum: datum, // datum als Date
-        pruefungen: [pruefung],
-      })
-    }
+// Prüfungen nach Datum gruppieren
+const groupedPruefungen = computed(() => {
+  return pruefungen.value.reduce(
+    (acc, pruefung) => {
+      const datum = new Date(pruefung.date.toISOString().split('T')[0])
 
-    return acc
-  },
-  [] as { datum: Date; pruefungen: typeof rawPruefungen }[],
-) // Datum als Date im Accumulator
+      const existingEntry = acc.find(
+        entry => entry.datum.getTime() === datum.getTime(),
+      )
+
+      if (existingEntry) {
+        existingEntry.pruefungen.push(pruefung)
+      } else {
+        acc.push({
+          datum: datum,
+          pruefungen: [pruefung],
+        })
+      }
+
+      return acc
+    },
+    [] as { datum: Date; pruefungen: Pruefung[] }[],
+  )
+})
+
+function handleExamDeleted(fach: string, date: Date) {
+  pruefungen.value = pruefungen.value.filter(
+    pruefung =>
+      pruefung.fach !== fach || pruefung.date.getTime() !== date.getTime(),
+  )
+
+  localStorage.setItem('pruefungen', JSON.stringify(pruefungen.value))
+}
 </script>
 
 <template>
@@ -56,8 +59,8 @@ const groupedPruefungen = rawPruefungen.reduce(
     <ExamDay
       v-for="(pruefungstag, index) in groupedPruefungen"
       :key="index"
-      :datum="pruefungstag.datum"
       :pruefungen="pruefungstag.pruefungen"
+      @examDeleted="handleExamDeleted"
     />
   </div>
 </template>
