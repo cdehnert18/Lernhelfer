@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import router from '@/router'
 import { ref } from 'vue'
+import { usePruefungenStore } from '@/stores/Exam';
 
+const store = usePruefungenStore()
 const formData = ref({
   name: '',
   date: '',
@@ -17,14 +19,10 @@ function save() {
   }
   const neuePruefung = {
     fach: formData.value.name,
-    date: formData.value.date,
+    date: new Date(formData.value.date),
   }
-  const gespeichertePruefungen = JSON.parse(
-    localStorage.getItem('pruefungen') || '[]',
-  )
 
-  gespeichertePruefungen.push(neuePruefung)
-  localStorage.setItem('pruefungen', JSON.stringify(gespeichertePruefungen))
+  store.addPruefung(neuePruefung)
   router.push('/pruefung')
 }
 </script>
