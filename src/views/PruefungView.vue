@@ -10,10 +10,6 @@ export default defineComponent({
   setup() {
     const store = usePruefungenStore();
 
-    onMounted(() => {
-      store.loadFromLocalStorage();
-    });
-
     // Gruppiere die Prüfungen nach Datum
     const groupedPruefungen = computed(() => {
       return store.pruefungen.reduce(
