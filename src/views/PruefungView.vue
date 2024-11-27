@@ -47,8 +47,7 @@ export default defineComponent({
       );
 
       if (index > -1) {
-        store.pruefungen.splice(index, 1);
-        store.saveToLocalStorage(); // Methode aus dem Store nutzen
+        store.removePruefung(index) // Methode aus dem Store nutzen
       }
     };
 

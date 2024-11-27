@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref,watch } from 'vue';
 
 export interface Pruefung {
     fach: string;
@@ -8,6 +8,10 @@ export interface Pruefung {
 
 export const usePruefungenStore = defineStore('pruefungen', () => {
   const pruefungen = ref<Pruefung[]>([]);
+
+  watch(pruefungen,(newPruefungen) => {
+    localStorage.setItem('pruefungen', JSON.stringify(newPruefungen));
+  }, {deep: true})
 
   const loadFromLocalStorage = () => {
     const data = localStorage.getItem('pruefungen');
@@ -19,24 +23,17 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
       : [];
   };
 
-  const saveToLocalStorage = () => {
-    localStorage.setItem('pruefungen', JSON.stringify(pruefungen.value));
-  };
-
   const addPruefung = (pruefung: Pruefung) => {
     pruefungen.value.push(pruefung);
-    saveToLocalStorage();
   };
 
   const removePruefung = (index: number) => {
     pruefungen.value.splice(index, 1);
-    saveToLocalStorage();
   };
 
   return {
     pruefungen,
     loadFromLocalStorage,
-    saveToLocalStorage,
     addPruefung,
     removePruefung,
   };
