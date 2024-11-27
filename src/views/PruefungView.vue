@@ -1,58 +1,65 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import ExamDay from '@/components/ExamDay.vue'
+<script lang="ts">
+import { defineComponent, computed, onMounted } from 'vue';
+import { usePruefungenStore } from '@/stores/Exam';
+import ExamDay from '@/components/ExamDay.vue';
 
-interface Pruefung {
-  fach: string
-  date: Date
-}
+export default defineComponent({
+  components: {
+    ExamDay,
+  },
+  setup() {
+    const store = usePruefungenStore();
 
-function getLocalStorageData(): Pruefung[] {
-  const data = localStorage.getItem('pruefungen')
-  return data
-    ? JSON.parse(data).map((item: { fach: string; date: string }) => ({
-        fach: item.fach,
-        date: new Date(item.date),
-      }))
-    : []
-}
+    onMounted(() => {
+      store.loadFromLocalStorage();
+    });
 
-const pruefungen = ref<Pruefung[]>(getLocalStorageData())
+    // Gruppiere die Prüfungen nach Datum
+    const groupedPruefungen = computed(() => {
+      return store.pruefungen.reduce(
+        (acc, pruefung) => {
+          const datum = new Date(pruefung.date.toISOString().split('T')[0]);
+          
+          const existingEntry = acc.find(
+            (entry) => entry.datum.getTime() === datum.getTime()
+          );
 
-// Prüfungen nach Datum gruppieren
-const groupedPruefungen = computed(() => {
-  return pruefungen.value.reduce(
-    (acc, pruefung) => {
-      const datum = new Date(pruefung.date.toISOString().split('T')[0])
+          if (existingEntry) {
+            existingEntry.pruefungen.push(pruefung);
+          } else {
+            acc.push({
+              datum: datum,
+              pruefungen: [pruefung],
+            });
+          }
 
-      const existingEntry = acc.find(
-        entry => entry.datum.getTime() === datum.getTime(),
-      )
+          return acc;
+        },
+        [] as { datum: Date; pruefungen: typeof store.pruefungen }[],
+      );
+    });
 
-      if (existingEntry) {
-        existingEntry.pruefungen.push(pruefung)
-      } else {
-        acc.push({
-          datum: datum,
-          pruefungen: [pruefung],
-        })
+    // Löschen einer Prüfung
+    const handleExamDeleted = (fach: string, date: Date) => {
+      const index = store.pruefungen.findIndex(
+        (pruefung) =>
+          pruefung.fach === fach && pruefung.date.getTime() === date.getTime()
+      );
+
+      if (index > -1) {
+        store.pruefungen.splice(index, 1);
+        store.saveToLocalStorage(); // Methode aus dem Store nutzen
       }
+    };
 
-      return acc
-    },
-    [] as { datum: Date; pruefungen: Pruefung[] }[],
-  )
-})
-
-function handleExamDeleted(fach: string, date: Date) {
-  pruefungen.value = pruefungen.value.filter(
-    pruefung =>
-      pruefung.fach !== fach || pruefung.date.getTime() !== date.getTime(),
-  )
-
-  localStorage.setItem('pruefungen', JSON.stringify(pruefungen.value))
-}
+    return {
+      groupedPruefungen,
+      handleExamDeleted,
+    };
+  },
+});
 </script>
+
 
 <template>
   <div>
