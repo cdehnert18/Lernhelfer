@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Navigation from '@/components/Navigation.vue';
 import { onMounted, onBeforeUnmount } from 'vue';
+import { usePruefungenStore } from '@/stores/Exam';
 
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   event.returnValue = "a";
@@ -8,6 +9,8 @@ function handleBeforeUnload(event: BeforeUnloadEvent) {
 
 onMounted(() => {
   window.addEventListener("beforeunload", handleBeforeUnload);
+  const store = usePruefungenStore();
+  store.loadFromLocalStorage();
 });
 
 onBeforeUnmount(() => {
