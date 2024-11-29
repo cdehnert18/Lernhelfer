@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { ref } from 'vue'
-import { usePruefungenStore } from '@/stores/Exam';
+import { usePruefungenStore } from '@/stores/Exam'
 
 const store = usePruefungenStore()
 const formData = ref({
@@ -13,13 +13,21 @@ const formData = ref({
 })
 
 function save() {
-  if (!formData.value.name || !formData.value.date || !formData.value.workload || !formData.value.startLearning) {
+  if (
+    !formData.value.name ||
+    !formData.value.date ||
+    !formData.value.workload ||
+    !formData.value.startLearning
+  ) {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
   const neuePruefung = {
     fach: formData.value.name,
     date: new Date(formData.value.date),
+    effort: parseInt(formData.value.workload),
+    start: new Date(formData.value.startLearning),
+    difficulty: formData.value.difficulty,
   }
 
   store.addPruefung(neuePruefung)
