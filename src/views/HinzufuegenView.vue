@@ -1,15 +1,35 @@
 <script setup lang="ts">
 import router from '@/router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
 
 const store = usePruefungenStore()
 const formData = ref({
   name: '',
-  date: '',
+  date: '2023-07-27T19:20',
   workload: '',
-  startLearning: '',
+  startLearning: '2023-07-20',
   difficulty: 'leicht',
+})
+
+onMounted(() => {
+  // Extrahiere die Werte aus der Route, wenn vorhanden
+  const query = router.currentRoute.value.query
+  if (query.fach) {
+    formData.value.name = query.fach as string
+  }
+  if (query.date) {
+    formData.value.date = (query.date as string).split('.')[0]
+  }
+  if (query.effort) {
+    formData.value.workload = query.effort as string
+  }
+  if (query.start) {
+    formData.value.startLearning = (query.start as string).split('T')[0]
+  }
+  if (query.difficulty) {
+    formData.value.difficulty = query.difficulty as string
+  }
 })
 
 function save() {
