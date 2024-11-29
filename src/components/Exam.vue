@@ -39,7 +39,6 @@ function editPruefung() {
       start: pruefung.start.toISOString(),
       difficulty: pruefung.difficulty,
     }
-    console.log(queryParams)
 
     router.push({ path: '/add', query: queryParams })
   } else {

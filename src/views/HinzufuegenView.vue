@@ -4,31 +4,34 @@ import { ref, onMounted } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
 
 const store = usePruefungenStore()
+
+const aktuellesDatum = new Date()
+
+const isNew = ref(true)
+
 const formData = ref({
   name: '',
-  date: '2023-07-27T19:20',
+  date: '',
   workload: '',
-  startLearning: '2023-07-20',
+  startLearning: (aktuellesDatum.toISOString() as string).split('T')[0],
   difficulty: 'leicht',
 })
 
 onMounted(() => {
-  // Extrahiere die Werte aus der Route, wenn vorhanden
   const query = router.currentRoute.value.query
-  if (query.fach) {
+  if (
+    query.fach &&
+    query.date &&
+    query.effort &&
+    query.start &&
+    query.difficulty
+  ) {
     formData.value.name = query.fach as string
-  }
-  if (query.date) {
     formData.value.date = (query.date as string).split('.')[0]
-  }
-  if (query.effort) {
     formData.value.workload = query.effort as string
-  }
-  if (query.start) {
     formData.value.startLearning = (query.start as string).split('T')[0]
-  }
-  if (query.difficulty) {
     formData.value.difficulty = query.difficulty as string
+    isNew.value = false
   }
 })
 
@@ -49,7 +52,16 @@ function save() {
     start: new Date(formData.value.startLearning),
     difficulty: formData.value.difficulty,
   }
-
+  if (!isNew.value) {
+    const index = store.pruefungen.findIndex(
+      pruefung =>
+        pruefung.fach === router.currentRoute.value.query.fach &&
+        pruefung.date.toISOString() === router.currentRoute.value.query.date,
+    )
+    if (index > -1) {
+      store.removePruefung(index)
+    }
+  }
   store.addPruefung(neuePruefung)
   router.push('/pruefung')
 }
@@ -57,7 +69,8 @@ function save() {
 
 <template>
   <form class="container flex-grow-1" @submit.prevent="save">
-    <h2 class="my-2">Neue Prüfung anlegen</h2>
+    <h2 v-if="isNew" class="my-2">Neue Prüfung anlegen</h2>
+    <h2 v-else class="my-2">Bestehende Prüfung bearbeiten</h2>
     <div class="my-3">
       <label for="inputName" class="form-label">Fach</label>
       <input
@@ -116,7 +129,9 @@ function save() {
     <div class="flex-grow-1"></div>
 
     <div class="d-flex justify-content-around mb-4">
-      <button type="button" class="btn btn-danger">Abbrechen</button>
+      <RouterLink to="/pruefung" v-if="!isNew" class="btn btn-danger"
+        >Abbrechen</RouterLink
+      >
       <button type="submit" class="btn btn-primary">Speichern</button>
     </div>
   </form>
