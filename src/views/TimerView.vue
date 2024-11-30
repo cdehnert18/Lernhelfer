@@ -1,109 +1,101 @@
-<script>
+<script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
 
-export default {
-  name: 'TimerView',
-  setup() {
-    // Zum Vorführen des Timers kann die Konstante TIMER_INTERVAL auf 100 gesetzt werden, sodass immer 100 Sekunden pro Sekunde vergehen. Sonst auf 1 setzen.
-    const TIMER_INTERVAL = 100
+// Konstante für Timer-Intervall
+const TIMER_INTERVAL = 100
 
-    // Zeit des Timers in Sekunden und Progress in Prozent (von 2 Stunden und 55 Minuten)
-    const timerTime = ref(0)
-    const timerProgress = computed(
-      () => (timerTime.value / pomodoro[pomodoro.length - 1]) * 100,
-    )
+// Zeit des Timers in Sekunden und Fortschritt in Prozent
+const timerTime = ref(0)
+const pomodoro = [0, 1500, 1800, 3300, 3600, 5100, 5400, 6900]
+const pomodoroIndex = ref(0)
 
-    // Zeit des aktuellen Phasenabschnitts in Sekunden und Progress in Prozent (von 25 Minuten für Arbeit und 5 Minuten für Pause)
-    const phaseTime = computed(
-      () => timerTime.value - pomodoro[pomodoroIndex.value - 1],
-    )
-    const phaseProgress = computed(() => {
-      const progress =
-        (phaseTime.value /
-          (pomodoro[pomodoroIndex.value] - pomodoro[pomodoroIndex.value - 1])) *
-        100
-      if (inWork.value) return progress
-      return 100 - progress
-    })
+// Timer-ID des laufenden Timers
+const timerID = ref<ReturnType<typeof setInterval> | null>(null)
 
-    // Arbeit oder Pause
-    const inWork = computed(() => pomodoroIndex.value % 2 === 1)
+// Timer-Progress in Prozent (basierend auf 2 Stunden und 55 Minuten)
+const timerProgress = computed(() => {
+  return (timerTime.value / pomodoro[pomodoro.length - 1]) * 100
+})
 
-    // TimerID des laufenden Timers um ihn zu pausieren
-    const timerID = ref(null)
+// Phasen-Zeit und Fortschritt
+const phaseTime = computed(() => {
+  return timerTime.value - pomodoro[pomodoroIndex.value - 1]
+})
 
-    // Pomodoro-Phasen in Sekunden und Index des aktuellen Phasenabschnitts
-    const pomodoro = [0, 1500, 1800, 3300, 3600, 5100, 5400, 6900]
-    const pomodoroIndex = ref(0)
+const phaseProgress = computed(() => {
+  const phaseLength =
+    pomodoro[pomodoroIndex.value] - pomodoro[pomodoroIndex.value - 1]
+  const progress = (phaseTime.value / phaseLength) * 100
+  return inWork.value ? progress : 100 - progress
+})
 
-    // Funktionen zum Starten, Pausieren und Zurücksetzen des Timers
-    const toggleTimer = () => {
-      if (!timerID.value) timerStart()
-      else timerPause()
+// Erkennung: Arbeit oder Pause
+const inWork = computed(() => pomodoroIndex.value % 2 === 1)
+
+// Timer-Funktionen
+const timerStart = () => {
+  timerID.value = setInterval(() => {
+    timerTime.value += TIMER_INTERVAL
+
+    if (timerTime.value >= pomodoro[pomodoro.length - 1]) {
+      timerReset()
     }
 
-    const timerStart = () => {
-      timerID.value = setInterval(() => {
-        timerTime.value += TIMER_INTERVAL
-
-        if (timerTime.value >= pomodoro[pomodoro.length - 1]) timerReset()
-
-        if (pomodoro[pomodoroIndex.value] <= timerTime.value)
-          pomodoroIndex.value++
-      }, 1000)
+    if (pomodoro[pomodoroIndex.value] <= timerTime.value) {
+      pomodoroIndex.value++
     }
-
-    const timerPause = () => {
-      clearInterval(timerID.value)
-      timerID.value = null
-    }
-
-    const timerReset = () => {
-      timerTime.value = 0
-      clearInterval(timerID.value)
-      timerID.value = null
-      pomodoroIndex.value = 0
-    }
-
-    // Erstellt einen String aus der Zeit in Sekunden
-    const buildTimeString = time => {
-      const hours = Math.floor(time / 3600)
-      const minutes = Math.floor((time % 3600) / 60)
-      const seconds = time % 60
-      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-    }
-
-    const phaseString = computed(() =>
-      pomodoroIndex.value > 0
-        ? buildTimeString(
-            pomodoro[pomodoroIndex.value] -
-              pomodoro[pomodoroIndex.value - 1] -
-              phaseTime.value,
-          )
-        : 'Start',
-    )
-    const timerString = computed(() => buildTimeString(timerTime.value))
-
-    onUnmounted(() => {
-      if (timerID.value) clearInterval(timerID.value)
-    })
-
-    return {
-      timerTime,
-      timerProgress,
-      phaseProgress,
-      phaseTime,
-      pomodoro,
-      pomodoroIndex,
-      inWork,
-      timerString,
-      phaseString,
-      toggleTimer,
-      timerPause,
-      timerReset,
-    }
-  },
+  }, 1000)
 }
+
+const timerPause = () => {
+  if (timerID.value) {
+    clearInterval(timerID.value)
+    timerID.value = null
+  }
+}
+
+const timerReset = () => {
+  timerTime.value = 0
+  pomodoroIndex.value = 0
+  timerPause()
+}
+
+const toggleTimer = () => {
+  if (timerID.value) {
+    timerPause()
+  } else {
+    timerStart()
+  }
+}
+
+// Hilfsfunktion: Zeit-String erstellen
+const buildTimeString = (time: number) => {
+  const hours = Math.floor(time / 3600)
+  const minutes = Math.floor((time % 3600) / 60)
+  const seconds = time % 60
+  return `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
+// Zeit-Strings für Anzeige
+const phaseString = computed(() => {
+  if (pomodoroIndex.value > 0) {
+    const remainingTime =
+      pomodoro[pomodoroIndex.value] -
+      pomodoro[pomodoroIndex.value - 1] -
+      phaseTime.value
+    return buildTimeString(remainingTime)
+  }
+  return 'Start'
+})
+
+const timerString = computed(() => buildTimeString(timerTime.value))
+
+// Timer aufräumen bei Entladen der Komponente
+onUnmounted(() => {
+  timerPause()
+})
 </script>
 
 <template>
@@ -111,9 +103,8 @@ export default {
     class="d-flex flex-column p-4 justify-content-between"
     style="height: 92vh"
   >
-    <h1>Timer</h1>
     <div class="d-flex justify-content-center" style="margin-top: 20px">
-      <select class="form-select w-25">
+      <select class="form-select w-75">
         <option selected>Mathematik</option>
         <option>Geschichte</option>
       </select>
@@ -158,7 +149,7 @@ export default {
 
         <!-- Markierungen -->
         <div
-          v-for="(time, index) in pomodoro.slice(1, this.pomodoro.length - 1)"
+          v-for="(time, index) in pomodoro.slice(1, pomodoro.length - 1)"
           :key="index"
           class="h-100 bg-light position-absolute"
           :style="{
