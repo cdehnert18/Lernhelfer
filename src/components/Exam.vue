@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed, defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import { usePruefungenStore } from '@/stores/Exam'
+
+const router = useRouter()
 
 defineComponent({
   name: 'ExamComponent',
@@ -14,8 +18,32 @@ const props = defineProps<{
   zeitraumStart: Date
 }>()
 
+const pruefungenStore = usePruefungenStore()
+
 function deletePruefung() {
   emit('examDeleted', props.pruefung, props.zeitraumStart)
+}
+
+function editPruefung() {
+  const pruefung = pruefungenStore.pruefungen.find(
+    exam =>
+      exam.fach === props.pruefung &&
+      exam.date.getTime() === props.zeitraumStart.getTime(), // Vergleiche beide Zeiten
+  )
+
+  if (pruefung) {
+    const queryParams = {
+      fach: pruefung.fach,
+      date: pruefung.date.toISOString(),
+      effort: pruefung.effort,
+      start: pruefung.start.toISOString(),
+      difficulty: pruefung.difficulty,
+    }
+
+    router.push({ path: '/add', query: queryParams })
+  } else {
+    console.error('Prüfung nicht gefunden!')
+  }
 }
 
 const zeitraum = computed(() => {
@@ -37,7 +65,9 @@ const zeitraum = computed(() => {
       </div>
       <div class="col-auto d-flex gap-2">
         <button class="btn btn-danger" @click="deletePruefung">Löschen</button>
-        <router-link to="/" class="btn btn-success">Bearbeiten</router-link>
+        <button class="btn btn-success" @click="editPruefung">
+          Bearbeiten
+        </button>
       </div>
     </div>
   </div>

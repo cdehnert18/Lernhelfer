@@ -1,27 +1,67 @@
 <script setup lang="ts">
 import router from '@/router'
-import { ref } from 'vue'
-import { usePruefungenStore } from '@/stores/Exam';
+import { ref, onMounted } from 'vue'
+import { usePruefungenStore } from '@/stores/Exam'
 
 const store = usePruefungenStore()
+
+const aktuellesDatum = new Date()
+
+const isNew = ref(true)
+
 const formData = ref({
   name: '',
   date: '',
   workload: '',
-  startLearning: '',
+  startLearning: (aktuellesDatum.toISOString() as string).split('T')[0],
   difficulty: 'leicht',
 })
 
+onMounted(() => {
+  const query = router.currentRoute.value.query
+  if (
+    query.fach &&
+    query.date &&
+    query.effort &&
+    query.start &&
+    query.difficulty
+  ) {
+    formData.value.name = query.fach as string
+    formData.value.date = (query.date as string).split('.')[0]
+    formData.value.workload = query.effort as string
+    formData.value.startLearning = (query.start as string).split('T')[0]
+    formData.value.difficulty = query.difficulty as string
+    isNew.value = false
+  }
+})
+
 function save() {
-  if (!formData.value.name || !formData.value.date || !formData.value.workload || !formData.value.startLearning) {
+  if (
+    !formData.value.name ||
+    !formData.value.date ||
+    !formData.value.workload ||
+    !formData.value.startLearning
+  ) {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
   const neuePruefung = {
     fach: formData.value.name,
     date: new Date(formData.value.date),
+    effort: parseInt(formData.value.workload),
+    start: new Date(formData.value.startLearning),
+    difficulty: formData.value.difficulty,
   }
-
+  if (!isNew.value) {
+    const index = store.pruefungen.findIndex(
+      pruefung =>
+        pruefung.fach === router.currentRoute.value.query.fach &&
+        pruefung.date.toISOString() === router.currentRoute.value.query.date,
+    )
+    if (index > -1) {
+      store.removePruefung(index)
+    }
+  }
   store.addPruefung(neuePruefung)
   router.push('/pruefung')
 }
@@ -29,7 +69,8 @@ function save() {
 
 <template>
   <form class="container flex-grow-1" @submit.prevent="save">
-    <h2 class="my-2">Neue Prüfung anlegen</h2>
+    <h2 v-if="isNew" class="my-2">Neue Prüfung anlegen</h2>
+    <h2 v-else class="my-2">Bestehende Prüfung bearbeiten</h2>
     <div class="my-3">
       <label for="inputName" class="form-label">Fach</label>
       <input
@@ -88,7 +129,9 @@ function save() {
     <div class="flex-grow-1"></div>
 
     <div class="d-flex justify-content-around mb-4">
-      <button type="button" class="btn btn-danger">Abbrechen</button>
+      <RouterLink to="/pruefung" v-if="!isNew" class="btn btn-danger"
+        >Abbrechen</RouterLink
+      >
       <button type="submit" class="btn btn-primary">Speichern</button>
     </div>
   </form>
