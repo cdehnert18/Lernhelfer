@@ -7,10 +7,8 @@ const store = usePruefungenStore()
 
 const aktuellesDatum = new Date()
 
-/*  
-  true, wenn eine völlig neue Prüfung erstellt wird
-  false, wenn eine bestehende Prüfung bearbeitet wird
-*/
+// true, wenn eine völlig neue Prüfung erstellt wird
+// false, wenn eine bestehende Prüfung bearbeitet wird
 const isNew = ref(true)
 
 const formData = ref({
@@ -21,7 +19,7 @@ const formData = ref({
   difficulty: 'leicht',
 })
 
-/* Initialisierung der Eingabefelder, wenn alle Parameter der URL existieren */
+// Initialisierung der Eingabefelder, wenn alle Parameter der URL existieren
 function initializeFormData(query: Record<string, unknown>) {
   if (
     query.fach &&
@@ -41,7 +39,7 @@ function initializeFormData(query: Record<string, unknown>) {
   return null
 }
 
-/* Initialisiert wenn möglich die EIngabefelder */
+// Initialisiert wenn möglich die EIngabefelder
 onMounted(() => {
   const query = router.currentRoute.value.query
   const initializedData = initializeFormData(query)
@@ -68,7 +66,7 @@ function save() {
     start: new Date(formData.value.start),
     difficulty: formData.value.difficulty,
   }
-  //  Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
+  // Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
   if (!isNew.value) {
     const index = store.pruefungen.findIndex(
       pruefung =>
