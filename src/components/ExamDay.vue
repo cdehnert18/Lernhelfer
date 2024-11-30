@@ -3,7 +3,7 @@ import { computed, watch, ref } from 'vue'
 import Exam from '@/components/Exam.vue'
 
 const emit = defineEmits<{
-  (event: 'examDeleted', name: string, date: Date): void
+  (event: 'examDeleted', name: string, examDate: Date): void
 }>()
 
 const props = defineProps<{

@@ -30,10 +30,11 @@ const groupedPruefungen = computed(() => {
 })
 
 // Löschen einer Prüfung
-function handleExamDeleted(name: string, date: Date) {
+function handleExamDeleted(name: string, examDate: Date) {
   const index = store.pruefungen.findIndex(
     pruefung =>
-      pruefung.name === name && pruefung.examDate.getTime() === date.getTime(),
+      pruefung.name === name &&
+      pruefung.examDate.getTime() === examDate.getTime(),
   )
 
   if (index > -1) {
