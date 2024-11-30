@@ -16,7 +16,7 @@ defineProps<{
       </div>
       <div class="col-auto d-flex gap-2">
         <button class="btn btn-danger">Löschen</button>
-        <router-link to="/" class="btn btn-success">Start</router-link>
+        <RouterLink to="/" class="btn btn-success">Start</RouterLink>
       </div>
     </div>
   </div>
