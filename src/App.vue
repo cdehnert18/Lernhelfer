@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import Navigation from '@/components/Navigation.vue';
-import { onMounted, onBeforeUnmount } from 'vue';
-import { usePruefungenStore } from '@/stores/Exam';
+import Navigation from '@/components/Navigation.vue'
+import { onMounted, onBeforeUnmount } from 'vue'
+import { usePruefungenStore } from '@/stores/Exam'
 
-function handleBeforeUnload(event: BeforeUnloadEvent) {
-  event.returnValue = "a";
+const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault()
 }
 
 onMounted(() => {
-  window.addEventListener("beforeunload", handleBeforeUnload);
-  const store = usePruefungenStore();
-  store.loadFromLocalStorage();
-});
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  const store = usePruefungenStore()
+  store.loadFromLocalStorage()
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", handleBeforeUnload);
-});
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
 </script>
 
 <template>
