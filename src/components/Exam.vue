@@ -10,7 +10,7 @@ defineComponent({
 })
 
 const emit = defineEmits<{
-  (event: 'examDeleted', fach: string, date: Date): void
+  (event: 'examDeleted', name: string, date: Date): void
 }>()
 
 const props = defineProps<{
