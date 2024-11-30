@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export interface Pruefung {
-  fach: string
-  date: Date
-  effort: number
+  name: string
+  examDate: Date
+  workload: number
   start: Date
   difficulty: string
 }
@@ -25,14 +25,14 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
     pruefungen.value = data
       ? JSON.parse(data).map(
           (item: {
-            fach: string
-            date: string
+            name: string
+            examDate: string
             effort: number
             start: string
             difficulty: string
           }) => ({
-            fach: item.fach,
-            date: new Date(item.date),
+            name: item.name,
+            examDate: new Date(item.examDate),
             effort: item.effort,
             start: new Date(item.start),
             difficulty: item.difficulty,

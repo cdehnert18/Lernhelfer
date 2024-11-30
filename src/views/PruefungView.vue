@@ -14,7 +14,7 @@ export default defineComponent({
     const groupedPruefungen = computed(() => {
       return store.pruefungen.reduce(
         (acc, pruefung) => {
-          const datum = new Date(pruefung.date.toISOString().split('T')[0])
+          const datum = new Date(pruefung.examDate.toISOString().split('T')[0])
 
           const existingEntry = acc.find(
             entry => entry.datum.getTime() === datum.getTime(),
@@ -28,7 +28,6 @@ export default defineComponent({
               pruefungen: [pruefung],
             })
           }
-
           return acc
         },
         [] as { datum: Date; pruefungen: typeof store.pruefungen }[],
@@ -39,7 +38,8 @@ export default defineComponent({
     const handleExamDeleted = (fach: string, date: Date) => {
       const index = store.pruefungen.findIndex(
         pruefung =>
-          pruefung.fach === fach && pruefung.date.getTime() === date.getTime(),
+          pruefung.name === fach &&
+          pruefung.examDate.getTime() === date.getTime(),
       )
 
       if (index > -1) {

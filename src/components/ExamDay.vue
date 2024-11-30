@@ -8,8 +8,8 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   pruefungen: {
-    fach: string
-    date: Date
+    name: string
+    examDate: Date
   }[]
 }>()
 
@@ -29,7 +29,7 @@ function onExamDeleted(fach: string, date: Date) {
   // Lokal die gelöschte Prüfung entfernen
   pruefungen.value = pruefungen.value.filter(
     pruefung =>
-      pruefung.fach !== fach || pruefung.date.getTime() !== date.getTime(),
+      pruefung.name !== fach || pruefung.examDate.getTime() !== date.getTime(),
   )
 }
 
@@ -43,7 +43,7 @@ const wochentag = computed(() => {
     'Freitag',
     'Samstag',
   ]
-  const dayIndex = props.pruefungen[0].date.getDay()
+  const dayIndex = props.pruefungen[0].examDate.getDay()
   return wochentage[dayIndex]
 })
 </script>
@@ -52,7 +52,7 @@ const wochentag = computed(() => {
   <header class="px-4 mt-2 mb-2">
     <div class="container px-0">
       <h4>{{ wochentag }}</h4>
-      <h6>{{ props.pruefungen[0].date.toLocaleDateString('de-DE') }}</h6>
+      <h6>{{ props.pruefungen[0].examDate.toLocaleDateString('de-DE') }}</h6>
     </div>
   </header>
   <main class="px-4">
@@ -60,8 +60,8 @@ const wochentag = computed(() => {
       v-for="(pruefung, index) in pruefungen"
       :key="index"
       class="mb-3"
-      :pruefung="pruefung.fach"
-      :zeitraumStart="pruefung.date"
+      :pruefung="pruefung.name"
+      :zeitraumStart="pruefung.examDate"
       @examDeleted="onExamDeleted"
     ></Exam>
   </main>
