@@ -49,6 +49,10 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
 
   const addPruefung = (pruefung: Pruefung) => {
     pruefungen.value.push(pruefung)
+
+    // Generate Learunits here:
+    // algorithmus erzeugt array von learnunits (newLearunits) (learnunit = {exam: pruefung(parameter aus Funktionskopf), date: Date, duration: number, done: false})
+    // dann newLearunits.forEach(learnunit => useLearnUnitStore().addLearnunit(learnunit)) speichert alle learnunits in Pinia
   }
 
   const removePruefung = (index: number) => {
