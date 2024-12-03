@@ -7,6 +7,8 @@ export interface Pruefung {
   workload: number
   start: Date
   difficulty: string
+  buffer: number
+  excludedDays: Date[]
 }
 
 export const usePruefungenStore = defineStore('pruefungen', () => {
@@ -30,12 +32,16 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
             effort: number
             start: string
             difficulty: string
+            buffer: number
+            excludedDays: string[]
           }) => ({
             name: item.name,
             examDate: new Date(item.examDate),
             effort: item.effort,
             start: new Date(item.start),
             difficulty: item.difficulty,
+            buffer: item.buffer,
+            excludedDays: item.excludedDays.map((date: string) => new Date(date)),
           }),
         )
       : []
