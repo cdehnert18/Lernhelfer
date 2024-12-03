@@ -2,6 +2,9 @@
 import LearningDay from '@/components/LearningDay.vue'
 import { usePruefungenStore } from '@/stores/Exam'
 import type { Pruefung } from '@/stores/Exam'
+import { useLearnUnitStore } from '@/stores/Learnunit';
+import type { Learnunit } from '@/stores/Learnunit';
+import { onMounted } from 'vue';
 
 const store = usePruefungenStore()
 
@@ -62,47 +65,29 @@ const initialize = () => {
 
 };
 
+const getLearningDays = () => {
+  useLearnUnitStore().loadFromLocalStorage();
+  const learnunits = useLearnUnitStore().learnunits;
+  const groupedByDay = new Map<string, Learnunit[]>();
+  learnunits.forEach(unit =>{
+    const date = unit.date.toISOString().split('T')[0];
+    if(groupedByDay.has(date)){
+      groupedByDay.get(date)?.push(unit);
+    } else {
+      groupedByDay.set(date, [unit]);
+    }
+  })
+  const learningDays = Array.from(groupedByDay).map(([datum, lerneinheiten]) => ({datum, lerneinheiten}));
+  return learningDays;
+}
 
 
 initialize();
-
-const learningDays = [
-  {
-    datum: '5.12.2024',
-    lerneinheiten: [
-      {
-        fach: 'Mathematik',
-        dauer: 120,
-      },
-      {
-        fach: 'Deutsch',
-        dauer: 45,
-      },
-      {
-        fach: 'Englisch',
-        dauer: 60,
-      },
-    ],
-  },
-  {
-    datum: '5.15.2024',
-    lerneinheiten: [
-      {
-        fach: 'Geschichte',
-        dauer: 75,
-      },
-      {
-        fach: 'Literatur',
-        dauer: 50,
-      },
-    ],
-  },
-]
 </script>
 
 <template>
   <div>
-    <LearningDay v-for="(day, index) in learningDays" :key="index" :datum="new Date(day.datum)"
+    <LearningDay v-for="(day, index) in getLearningDays()" :key="index" :datum="new Date(day.datum)"
       :lerneinheiten="day.lerneinheiten" />
   </div>
 </template>
