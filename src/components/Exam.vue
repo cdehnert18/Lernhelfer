@@ -10,7 +10,7 @@ defineComponent({
 })
 
 const emit = defineEmits<{
-  (event: 'examDeleted', fach: string, date: Date): void
+  (event: 'examDeleted', name: string, examDate: Date): void
 }>()
 
 const props = defineProps<{
@@ -27,15 +27,15 @@ function deletePruefung() {
 function editPruefung() {
   const pruefung = pruefungenStore.pruefungen.find(
     exam =>
-      exam.fach === props.pruefung &&
-      exam.date.getTime() === props.zeitraumStart.getTime(), // Vergleiche beide Zeiten
+      exam.name === props.pruefung &&
+      exam.examDate.getTime() === props.zeitraumStart.getTime(), // Vergleiche beide Zeiten
   )
 
   if (pruefung) {
     const queryParams = {
-      fach: pruefung.fach,
-      date: pruefung.date.toISOString(),
-      effort: pruefung.effort,
+      fach: pruefung.name,
+      date: pruefung.examDate.toISOString(),
+      effort: pruefung.workload,
       start: pruefung.start.toISOString(),
       difficulty: pruefung.difficulty,
     }

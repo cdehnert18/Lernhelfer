@@ -7,18 +7,20 @@ const store = usePruefungenStore()
 
 const aktuellesDatum = new Date()
 
+// true, wenn eine völlig neue Prüfung erstellt wird
+// false, wenn eine bestehende Prüfung bearbeitet wird
 const isNew = ref(true)
 
 const formData = ref({
   name: '',
-  date: '',
+  examDate: '',
   workload: '',
-  startLearning: (aktuellesDatum.toISOString() as string).split('T')[0],
+  start: (aktuellesDatum.toISOString() as string).split('T')[0],
   difficulty: 'leicht',
 })
 
-onMounted(() => {
-  const query = router.currentRoute.value.query
+// Initialisierung der Eingabefelder, wenn alle Parameter der URL existieren
+function initializeFormData(query: Record<string, unknown>) {
   if (
     query.fach &&
     query.date &&
@@ -26,11 +28,23 @@ onMounted(() => {
     query.start &&
     query.difficulty
   ) {
-    formData.value.name = query.fach as string
-    formData.value.date = (query.date as string).split('.')[0]
-    formData.value.workload = query.effort as string
-    formData.value.startLearning = (query.start as string).split('T')[0]
-    formData.value.difficulty = query.difficulty as string
+    return {
+      name: query.fach as string,
+      examDate: (query.date as string).split('.')[0],
+      workload: query.effort as string,
+      start: (query.start as string).split('T')[0],
+      difficulty: query.difficulty as string,
+    }
+  }
+  return null
+}
+
+// Initialisiert wenn möglich die EIngabefelder
+onMounted(() => {
+  const query = router.currentRoute.value.query
+  const initializedData = initializeFormData(query)
+  if (initializedData) {
+    formData.value = initializedData
     isNew.value = false
   }
 })
@@ -38,25 +52,27 @@ onMounted(() => {
 function save() {
   if (
     !formData.value.name ||
-    !formData.value.date ||
+    !formData.value.examDate ||
     !formData.value.workload ||
-    !formData.value.startLearning
+    !formData.value.start
   ) {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
   const neuePruefung = {
-    fach: formData.value.name,
-    date: new Date(formData.value.date),
-    effort: parseInt(formData.value.workload),
-    start: new Date(formData.value.startLearning),
+    name: formData.value.name,
+    examDate: new Date(formData.value.examDate),
+    workload: parseInt(formData.value.workload),
+    start: new Date(formData.value.start),
     difficulty: formData.value.difficulty,
   }
+  // Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
   if (!isNew.value) {
     const index = store.pruefungen.findIndex(
       pruefung =>
-        pruefung.fach === router.currentRoute.value.query.fach &&
-        pruefung.date.toISOString() === router.currentRoute.value.query.date,
+        pruefung.name === router.currentRoute.value.query.fach &&
+        pruefung.examDate.toISOString() ===
+          router.currentRoute.value.query.date,
     )
     if (index > -1) {
       store.removePruefung(index)
@@ -88,7 +104,7 @@ function save() {
         id="inputDate"
         class="form-control"
         type="datetime-local"
-        v-model="formData.date"
+        v-model="formData.examDate"
       />
     </div>
 
@@ -109,7 +125,7 @@ function save() {
         id="inputStart"
         class="form-control"
         type="date"
-        v-model="formData.startLearning"
+        v-model="formData.start"
       />
     </div>
 
