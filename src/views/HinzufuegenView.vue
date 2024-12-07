@@ -65,6 +65,8 @@ function save() {
     workload: parseInt(formData.value.workload),
     start: new Date(formData.value.start),
     difficulty: formData.value.difficulty,
+    buffer: 0,
+    excludedDays: [],
   }
   // Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
   if (!isNew.value) {
