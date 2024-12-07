@@ -16,13 +16,13 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
   watch(
     learnunits,
     newLearnunits => {
-        const serialized = newLearnunits.map(unit => ({
-            examName: unit.exam.name,
-            date: unit.date.toISOString(),
-            duration: unit.duration,
-            done: unit.done
-        }))
-          localStorage.setItem('learnunits', JSON.stringify(serialized))
+      const serialized = newLearnunits.map(unit => ({
+        examName: unit.exam.name,
+        date: unit.date.toISOString(),
+        duration: unit.duration,
+        done: unit.done
+      }))
+      localStorage.setItem('learnunits', JSON.stringify(serialized))
     },
     { deep: true },
   )
@@ -30,7 +30,7 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
   const loadFromLocalStorage = () => {
     const data = localStorage.getItem('learnunits')
     learnunits.value = data
-    ? JSON.parse(data).map((item: { examName: string; date: string; duration: number; done: boolean }) => {
+      ? JSON.parse(data).map((item: { examName: string; date: string; duration: number; done: boolean }) => {
         const exam = usePruefungenStore().pruefungen.find(p => p.name === item.examName)
         if (!exam) {
           throw new Error(`Prüfung mit dem Namen ${item.examName} nicht gefunden.`)
@@ -43,11 +43,11 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
           done: item.done
         }
       })
-    : []
+      : []
   }
 
 
-  const addLearunit= (learnunit: Learnunit) => {
+  const addLearnunit = (learnunit: Learnunit) => {
     learnunits.value.push(learnunit)
   }
 
@@ -58,7 +58,7 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
   return {
     learnunits,
     loadFromLocalStorage,
-    addLearunit,
+    addLearnunit,
     removeLearnunit,
   }
 })
