@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, useTemplateRef } from 'vue'
 import { useLearnUnitStore } from '@/stores/Learnunit';
 import type { Learnunit } from '@/stores/Learnunit';
 
@@ -36,11 +36,17 @@ const inWork = computed(() => pomodoroIndex.value % 2 === 1)
 
 const selectedLearnunit = ref<Learnunit | null>(null)
 
+const learnunitSelection = useTemplateRef('learnunitSelection')
+
 // Timer-Funktionen
 const timerStart = () => {
   if (selectedLearnunit.value === null) {
+    learnunitSelection.value?.focus()
+    learnunitSelection.value?.showPicker()
     return
   }
+  if(learnunitSelection.value)
+    learnunitSelection.value.disabled = true
   timerID.value = setInterval(() => {
     timerTime.value += TIMER_INTERVAL
 
@@ -66,6 +72,8 @@ const timerReset = () => {
     selectedLearnunit.value.done = true
     selectedLearnunit.value = null
   }
+  if(learnunitSelection.value)
+    learnunitSelection.value.disabled = false
   timerTime.value = 0
   pomodoroIndex.value = 0
   timerPause()
@@ -126,7 +134,7 @@ onUnmounted(() => {
   <div>{{ selectedLearnunit }}</div>
     <!-- Lerneinheiten-Auswahl -->
     <div class="d-flex justify-content-center" style="margin-top: 20px">
-      <select class="form-select w-75" v-model="selectedLearnunit" :disabled="timerTime!==0">
+      <select class="form-select w-75" v-model="selectedLearnunit" ref="learnunitSelection">
         <option :value="null" selected disabled hidden>Lerneinheit auswählen ...</option>
         <option 
           v-for="(learnunit, index) in getFilteredLearnunits()"
