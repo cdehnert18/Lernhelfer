@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
+import { useLearnUnitStore } from '@/stores/Learnunit'
 import ExamDay from '@/components/ExamDay.vue'
 
-const store = usePruefungenStore()
+const storePruefung = usePruefungenStore()
+const storeLearnunit = useLearnUnitStore()
 
 // Gruppierung der Prüfungen nach Datum
 const groupedPruefungen = computed(() => {
-  return store.pruefungen.reduce(
+  return storePruefung.pruefungen.reduce(
     (acc, pruefung) => {
       const datum = new Date(pruefung.examDate.toISOString().split('T')[0])
 
@@ -25,20 +27,34 @@ const groupedPruefungen = computed(() => {
       }
       return acc
     },
-    [] as { datum: Date; pruefungen: typeof store.pruefungen }[],
+    [] as { datum: Date; pruefungen: typeof storePruefung.pruefungen }[],
   )
 })
 
-// Löschen einer Prüfung
+// Löschen einer Prüfung & Löschen der Lerneinheiten
 function handleExamDeleted(name: string, examDate: Date) {
-  const index = store.pruefungen.findIndex(
+  const index = storePruefung.pruefungen.findIndex(
     pruefung =>
       pruefung.name === name &&
       pruefung.examDate.getTime() === examDate.getTime(),
   )
 
   if (index > -1) {
-    store.removePruefung(index) // Methode aus dem Store nutzen
+    // Rückwärts iterieren, damit sich die Indizes nicht verschieben
+    for (let i = storeLearnunit.learnunits.length - 1; i >= 0; i--) {
+      const learnunit = storeLearnunit.learnunits[i]
+      if (
+        learnunit.exam.name === name &&
+        learnunit.exam.examDate.getTime() === examDate.getTime()
+      ) {
+        storeLearnunit.removeLearnunit(i)
+      } else {
+        console.log(
+          learnunit.exam.examDate.getTime() + ' VS ' + examDate.getTime(),
+        )
+      }
+    }
+    storePruefung.removePruefung(index) // Methode aus dem Store nutzen
   }
 }
 </script>
