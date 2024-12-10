@@ -2,6 +2,7 @@
 import Navigation from '@/components/Navigation.vue'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
+import { useLearnUnitStore } from '@/stores/Learnunit'
 
 const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   event.preventDefault()
@@ -9,8 +10,10 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload)
-  const store = usePruefungenStore()
-  store.loadFromLocalStorage()
+  const storeExam = usePruefungenStore()
+  const storeLearnUnit = useLearnUnitStore()
+  storeExam.loadFromLocalStorage()
+  storeLearnUnit.loadFromLocalStorage()
 })
 
 onBeforeUnmount(() => {

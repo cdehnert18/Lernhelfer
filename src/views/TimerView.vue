@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, useTemplateRef } from 'vue'
+import { useLearnUnitStore } from '@/stores/Learnunit';
+import type { Learnunit } from '@/stores/Learnunit';
 
 // Konstante für Timer-Intervall
 const TIMER_INTERVAL = 100
@@ -32,8 +34,19 @@ const phaseProgress = computed(() => {
 // Erkennung: Arbeit oder Pause
 const inWork = computed(() => pomodoroIndex.value % 2 === 1)
 
+const selectedLearnunit = ref<Learnunit | null>(null)
+
+const learnunitSelection = useTemplateRef('learnunitSelection')
+
 // Timer-Funktionen
 const timerStart = () => {
+  if (selectedLearnunit.value === null) {
+    learnunitSelection.value?.focus()
+    learnunitSelection.value?.showPicker()
+    return
+  }
+  if(learnunitSelection.value)
+    learnunitSelection.value.disabled = true
   timerID.value = setInterval(() => {
     timerTime.value += TIMER_INTERVAL
 
@@ -55,6 +68,12 @@ const timerPause = () => {
 }
 
 const timerReset = () => {
+  if (selectedLearnunit.value) {
+    selectedLearnunit.value.done = true
+    selectedLearnunit.value = null
+  }
+  if(learnunitSelection.value)
+    learnunitSelection.value.disabled = false
   timerTime.value = 0
   pomodoroIndex.value = 0
   timerPause()
@@ -66,6 +85,15 @@ const toggleTimer = () => {
   } else {
     timerStart()
   }
+}
+
+// Filtert die Lerneinheiten für den aktuellen Tag welche noch nicht abgeschlossen sind
+const getFilteredLearnunits = () => {
+  const today = new Date().toISOString().split('T')[0];
+  return useLearnUnitStore().learnunits.filter((item)=>
+    item.done === false && 
+    item.date.toISOString().split('T')[0] === today
+  )
 }
 
 // Hilfsfunktion: Zeit-String erstellen
@@ -103,10 +131,17 @@ onUnmounted(() => {
     class="d-flex flex-column p-4 justify-content-between"
     style="height: 92vh"
   >
+  <div>{{ selectedLearnunit }}</div>
+    <!-- Lerneinheiten-Auswahl -->
     <div class="d-flex justify-content-center" style="margin-top: 20px">
-      <select class="form-select w-75">
-        <option selected>Mathematik</option>
-        <option>Geschichte</option>
+      <select class="form-select w-75" v-model="selectedLearnunit" ref="learnunitSelection">
+        <option :value="null" selected disabled hidden>Lerneinheit auswählen ...</option>
+        <option 
+          v-for="(learnunit, index) in getFilteredLearnunits()"
+          :key="index"
+          :value="learnunit">
+              {{ learnunit.exam.name }}
+        </option>
       </select>
     </div>
     <div

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import LearningUnit from '@/components/LearningUnit.vue'
+import type { Learnunit } from '@/stores/Learnunit';
 
 const props = defineProps<{
   datum: Date
-  lerneinheiten: {
-    fach: string
-    dauer: number
-  }[]
+  lerneinheiten: Learnunit[]
 }>()
 
 const wochentag = computed(() => {
@@ -37,8 +35,8 @@ const wochentag = computed(() => {
       v-for="(lerneinheit, index) in props.lerneinheiten"
       :key="index"
       class="mb-3"
-      :pruefung="lerneinheit.fach"
-      :lerndauer="lerneinheit.dauer"
+      :pruefung="lerneinheit.exam.name"
+      :lerndauer="lerneinheit.duration"
     ></LearningUnit>
   </main>
 </template>
