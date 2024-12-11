@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
 import { useLearnUnitStore } from '@/stores/Learnunit'
 import ExamDay from '@/components/ExamDay.vue'
+import Placeholder from '@/components/Placeholder.vue'
 
 const storePruefung = usePruefungenStore()
 const storeLearnunit = useLearnUnitStore()
@@ -67,5 +68,8 @@ function handleExamDeleted(name: string, examDate: Date) {
       :pruefungen="pruefungstag.pruefungen"
       @examDeleted="handleExamDeleted"
     />
+    <Placeholder v-if="groupedPruefungen.length === 0">
+      Hier werden Prüfungen angezeigt, die du erstellt hast
+    </Placeholder>
   </div>
 </template>
