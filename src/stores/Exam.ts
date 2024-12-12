@@ -108,7 +108,6 @@ const createLearnPlan = (pruefung: Pruefung) => {
         exam: pruefung,
         date: new Date(currentDateIterator),
         duration: learningTime,
-        done: false,
       });
     }
     currentDateIterator.setDate(currentDateIterator.getDate() + 1);

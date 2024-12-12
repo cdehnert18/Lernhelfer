@@ -7,7 +7,6 @@ export interface Learnunit {
   exam: Pruefung
   date: Date
   duration: number
-  done: boolean
 }
 
 export const useLearnUnitStore = defineStore('learnunit', () => {
@@ -20,7 +19,6 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
         examName: unit.exam.name,
         date: unit.date.toISOString(),
         duration: unit.duration,
-        done: unit.done
       }))
       localStorage.setItem('learnunits', JSON.stringify(serialized))
     },
@@ -40,7 +38,6 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
           exam: exam,
           date: new Date(item.date),
           duration: item.duration,
-          done: item.done
         }
       })
       : []
@@ -54,11 +51,19 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
   const removeLearnunit = (index: number) => {
     learnunits.value.splice(index, 1)
   }
-
+  
+  const completeLearnunit = (learnunit: Learnunit) => {
+    const index = learnunits.value.findIndex(unit => unit === learnunit)
+    if (index === -1) {
+      throw new Error('Learnunit nicht gefunden.')
+    }
+    removeLearnunit(index)
+  }
   return {
     learnunits,
     loadFromLocalStorage,
     addLearnunit,
     removeLearnunit,
+    completeLearnunit,
   }
 })

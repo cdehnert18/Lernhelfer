@@ -69,7 +69,7 @@ const timerPause = () => {
 
 const timerReset = () => {
   if (selectedLearnunit.value) {
-    selectedLearnunit.value.done = true
+    useLearnUnitStore().completeLearnunit(selectedLearnunit.value)
     selectedLearnunit.value = null
   }
   if(learnunitSelection.value)
@@ -91,7 +91,6 @@ const toggleTimer = () => {
 const getFilteredLearnunits = () => {
   const today = new Date().toISOString().split('T')[0];
   return useLearnUnitStore().learnunits.filter((item)=>
-    item.done === false && 
     item.date.toISOString().split('T')[0] === today
   )
 }
