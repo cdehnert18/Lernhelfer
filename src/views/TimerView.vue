@@ -130,7 +130,6 @@ onUnmounted(() => {
     class="d-flex flex-column p-4 justify-content-between"
     style="height: 92vh"
   >
-  <div>{{ selectedLearnunit }}</div>
     <!-- Lerneinheiten-Auswahl -->
     <div class="d-flex justify-content-center" style="margin-top: 20px">
       <select class="form-select w-75" v-model="selectedLearnunit" ref="learnunitSelection">
