@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted, useTemplateRef } from 'vue'
+import { ref, computed, onMounted, onUnmounted, useTemplateRef } from 'vue'
+import { useRouter } from 'vue-router'
 import { useLearnUnitStore } from '@/stores/Learnunit';
 import type { Learnunit } from '@/stores/Learnunit';
 
@@ -37,6 +38,8 @@ const inWork = computed(() => pomodoroIndex.value % 2 === 1)
 const selectedLearnunit = ref<Learnunit | null>(null)
 
 const learnunitSelection = useTemplateRef('learnunitSelection')
+
+const router = useRouter()
 
 // Timer-Funktionen
 const timerStart = () => {
@@ -122,6 +125,21 @@ const timerString = computed(() => buildTimeString(timerTime.value))
 // Timer aufräumen bei Entladen der Komponente
 onUnmounted(() => {
   timerPause()
+})
+
+onMounted(() => {
+  const query = router.currentRoute.value.query
+  if (query.exam && query.examDate && query.date) {
+    const learnunit = useLearnUnitStore().learnunits.find(
+      learnunit =>
+        learnunit.exam.name === query.exam &&
+        learnunit.exam.examDate.toISOString() === query.examDate &&
+        learnunit.date.toISOString() === query.date,
+    )
+    if (learnunit) {
+      selectedLearnunit.value = learnunit
+    }
+  }
 })
 </script>
 

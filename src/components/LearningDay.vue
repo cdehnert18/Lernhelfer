@@ -37,6 +37,7 @@ const wochentag = computed(() => {
       class="mb-3"
       :pruefung="lerneinheit.exam.name"
       :lerndauer="lerneinheit.duration"
+      :date="lerneinheit.date"
     ></LearningUnit>
   </main>
 </template>
