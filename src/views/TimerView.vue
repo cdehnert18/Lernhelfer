@@ -171,7 +171,7 @@ onMounted(() => {
       ></div>
       <!-- Timertext -->
       <div
-        class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary"
+        class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary" style="pointer-events: none"
       >
         {{ phaseString }}
       </div>
