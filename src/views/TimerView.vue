@@ -5,7 +5,7 @@ import { useLearnUnitStore } from '@/stores/Learnunit';
 import type { Learnunit } from '@/stores/Learnunit';
 
 // Konstante für Timer-Intervall
-const TIMER_INTERVAL = 100
+const TIMER_INTERVAL = 60
 
 // Zeit des Timers in Sekunden und Fortschritt in Prozent
 const timerTime = ref(0)
@@ -50,16 +50,27 @@ const timerStart = () => {
   }
   if(learnunitSelection.value)
     learnunitSelection.value.disabled = true
+
   timerID.value = setInterval(() => {
     timerTime.value += TIMER_INTERVAL
 
-    if (timerTime.value >= pomodoro[pomodoro.length - 1]) {
-      timerReset()
+    if (timerTime.value%60 == 0 && selectedLearnunit.value && inWork.value){
+      selectedLearnunit.value.duration--
+      if(selectedLearnunit.value.duration <= 0){
+        useLearnUnitStore().completeLearnunit(selectedLearnunit.value)
+        selectedLearnunit.value = null
+        if(learnunitSelection.value)
+          learnunitSelection.value.disabled = false
+        getFilteredLearnunits().length>0?timerPause():timerReset()
+      }
     }
 
-    if (pomodoro[pomodoroIndex.value] <= timerTime.value) {
+    if (timerTime.value >= pomodoro[pomodoro.length - 1])
+      timerReset()
+
+    if (pomodoro[pomodoroIndex.value] <= timerTime.value)
       pomodoroIndex.value++
-    }
+
   }, 1000)
 }
 
@@ -71,10 +82,7 @@ const timerPause = () => {
 }
 
 const timerReset = () => {
-  if (selectedLearnunit.value) {
-    useLearnUnitStore().completeLearnunit(selectedLearnunit.value)
-    selectedLearnunit.value = null
-  }
+  selectedLearnunit.value = null
   if(learnunitSelection.value)
     learnunitSelection.value.disabled = false
   timerTime.value = 0
@@ -156,10 +164,14 @@ onMounted(() => {
           v-for="(learnunit, index) in getFilteredLearnunits()"
           :key="index"
           :value="learnunit">
-              {{ learnunit.exam.name }}
+              {{ learnunit.exam.name }} ({{ learnunit.duration }}min)
         </option>
       </select>
     </div>
+
+    <div v-if="!selectedLearnunit && getFilteredLearnunits().length>0" class="w-100 text-danger text-center fs-3">Wähle einen Lernblock</div>
+    <div v-if="!selectedLearnunit && getFilteredLearnunits().length==0" class="w-100 text-success text-center fs-3">Alle Lernblöcke für heute abgeschlossen</div>
+
     <div
       class="d-flex justify-content-center align-items-center h-75"
       style="position: relative"
@@ -171,7 +183,7 @@ onMounted(() => {
       ></div>
       <!-- Timertext -->
       <div
-        class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary"
+        class="user-select-none z-2 fs-1 fw-bold position-absolute text-primary" style="pointer-events: none"
       >
         {{ phaseString }}
       </div>
