@@ -14,6 +14,7 @@ const isNew = ref(true)
 const formData = ref({
   name: '',
   examDate: '',
+  examTime: '',
   workload: '',
   start: (aktuellesDatum.toISOString() as string).split('T')[0],
   difficulty: 'leicht',
@@ -24,14 +25,15 @@ function initializeFormData(query: Record<string, unknown>) {
   if (
     query.fach &&
     query.date &&
-    query.effort &&
+    query.workload &&
     query.start &&
     query.difficulty
   ) {
     return {
       name: query.fach as string,
-      examDate: (query.date as string).split('.')[0],
-      workload: query.effort as string,
+      examDate: (query.date as string).split('T')[0],
+      examTime: (query.date as string).split('T')[1]?.slice(0, 5),
+      workload: query.workload as string,
       start: (query.start as string).split('T')[0],
       difficulty: query.difficulty as string,
     }
@@ -59,9 +61,14 @@ function save() {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
+
+  const [hours, minutes] = formData.value.examTime.split(':')
+  const examDateWithTime = new Date(formData.value.examDate)
+  examDateWithTime.setHours(parseInt(hours, 10), parseInt(minutes, 10))
+
   const neuePruefung = {
     name: formData.value.name,
-    examDate: new Date(formData.value.examDate),
+    examDate: examDateWithTime,
     workload: parseInt(formData.value.workload),
     start: new Date(formData.value.start),
     difficulty: formData.value.difficulty,
@@ -101,19 +108,29 @@ function save() {
     </div>
 
     <div class="mb-3">
-      <label for="inputDate" class="form-label">Datum</label>
+      <label for="inputDate" class="form-label">Prüfungsdatum</label>
       <input
         id="inputDate"
         class="form-control"
-        type="datetime-local"
+        type="date"
         v-model="formData.examDate"
       />
     </div>
 
     <div class="mb-3">
-      <label for="inputEffort" class="form-label">Aufwand in Stunden</label>
+      <label for="inputTime" class="form-label">Prüfungsuhrzeit</label>
       <input
-        id="inputEffort"
+        id="inputTime"
+        class="form-control"
+        type="time"
+        v-model="formData.examTime"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="inputWorkload" class="form-label">Aufwand in Stunden</label>
+      <input
+        id="inputWorkload"
         class="form-control"
         type="number"
         v-model="formData.workload"

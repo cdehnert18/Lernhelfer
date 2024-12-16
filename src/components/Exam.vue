@@ -35,7 +35,7 @@ function editPruefung() {
     const queryParams = {
       fach: pruefung.name,
       date: pruefung.examDate.toISOString(),
-      effort: pruefung.workload,
+      workload: pruefung.workload,
       start: pruefung.start.toISOString(),
       difficulty: pruefung.difficulty,
     }
