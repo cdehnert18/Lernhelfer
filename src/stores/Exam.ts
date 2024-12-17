@@ -10,6 +10,7 @@ export interface Pruefung {
   difficulty: string
   buffer: number
   excludedDays: Date[]
+  learnedTime: number
 }
 
 export const usePruefungenStore = defineStore('pruefungen', () => {
@@ -35,6 +36,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
           difficulty: string
           buffer: number
           excludedDays: string[]
+          learnedTime: number
         }) => ({
           name: item.name,
           examDate: new Date(item.examDate),
@@ -43,6 +45,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
           difficulty: item.difficulty,
           buffer: item.buffer,
           excludedDays: item.excludedDays.map((date: string) => new Date(date)),
+          learnedTime: item.learnedTime,
         }),
       )
       : []
@@ -82,24 +85,50 @@ const initLearnPlan = (pruefung: Pruefung) => {
   return newLearnunits
 };
 
-const createLearnPlan = (pruefung: Pruefung) => {
+export const createLearnPlan = (pruefung: Pruefung) => {
   let amountDays;
   let actualStartDate;
-  if (pruefung.start.getTime() > Date.now()) {
-    amountDays = (pruefung.examDate.getTime() - pruefung.start.getTime()) / (1000 * 60 * 60 * 24) - pruefung.excludedDays.length;
+  const examDate = new Date(pruefung.examDate)
+  examDate.setHours(0, 0, 0, 0)
+  const startDate = new Date(pruefung.start)
+  startDate.setHours(0, 0, 0, 0)
+
+  // Anzahl an zukünftigen excludedDays ab morgen
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const amountFutureExcludedDays = pruefung.excludedDays.filter(
+    (excludedDate) => {
+      const excludedDay = new Date(excludedDate);
+      excludedDay.setHours(0, 0, 0, 0);
+      return excludedDay.getTime() >= tomorrow.getTime();
+    }
+  ).length;
+
+  //Lernzeit pro Tag berechnen
+  if (startDate.getTime() > Date.now()) {
     actualStartDate = pruefung.start
+    amountDays = (examDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) - amountFutureExcludedDays;
   }
   else {
-    amountDays = (pruefung.examDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24) - pruefung.excludedDays.length;
-    actualStartDate = new Date(Date.now())
+    const dateToday = new Date(Date.now())
+    dateToday.setHours(0, 0, 0, 0)
+    actualStartDate = new Date(dateToday)
+    //erst ab morgigen Tag neue Lernunits erstellen
+    actualStartDate.setDate(dateToday.getDate() + 1)
+    amountDays = (examDate.getTime() - actualStartDate.getTime()) / (1000 * 60 * 60 * 24) - amountFutureExcludedDays;
   }
   if (pruefung.examDate.getHours() > 12)
     amountDays++
-  const learningTime = Math.round((pruefung.workload / amountDays) * 60)
+  const learningTime = Math.round(((pruefung.workload + pruefung.buffer - pruefung.learnedTime) / amountDays) * 60)
+
+  //Array von Lernunits erstellen
   const newLearnunits = []
   const currentDateIterator = actualStartDate
-
   while (currentDateIterator <= pruefung.examDate) {
+    if (currentDateIterator.toDateString() === pruefung.examDate.toDateString() && pruefung.examDate.getHours() < 12)
+      break;
     const isExcludedDay = pruefung.excludedDays.some(
       (excludedDate) => new Date(excludedDate).toDateString() === currentDateIterator.toDateString()
     );
@@ -115,3 +144,6 @@ const createLearnPlan = (pruefung: Pruefung) => {
   return newLearnunits;
 };
 
+//Plan: bei Lernunit löschen aktuelle learningTime für alle Tage in Vergangenheit, die nicht exkludiert sind auf learnedTime addieren
+// dann Tage zu exkludierten Tagen hinzufügen
+// dann alle Lernunits von Prüfung löschen, außer heutige Lernunit, dann neue Lernunits ab morgen erstellen

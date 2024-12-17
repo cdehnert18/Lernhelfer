@@ -67,6 +67,7 @@ function save() {
     difficulty: formData.value.difficulty,
     buffer: 0,
     excludedDays: [],
+    learnedTime: 0,
   }
   // Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
   if (!isNew.value) {

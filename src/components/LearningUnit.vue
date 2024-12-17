@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLearnUnitStore } from '@/stores/Learnunit'
+import { usePruefungenStore, createLearnPlan, type Pruefung } from '@/stores/Exam'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
@@ -9,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const learnunitStore = useLearnUnitStore()
+const storePruefung = usePruefungenStore()
 const router = useRouter()
 
 function startLearnunit() {
@@ -27,6 +29,55 @@ function startLearnunit() {
   }
 }
 
+function deleteLearnunit() {
+  const pruefung = storePruefung.pruefungen.find(
+    pruefung =>
+      pruefung.name === props.pruefung
+  )
+
+  if (pruefung) {
+    //gelernte Zeit dokumentieren
+    addLearnedTime(pruefung)
+    //Lerneinheiten löschen
+    for (let i = learnunitStore.learnunits.length - 1; i >= 0; i--) {
+      const learnunit = learnunitStore.learnunits[i]
+      if (
+        learnunit.exam.name === pruefung.name &&
+        learnunit.exam.examDate.getTime() === pruefung.examDate.getTime() &&
+        learnunit.date.toISOString().split('T')[0] != Date.now().toString().split('T')[0]
+      ) {
+        learnunitStore.removeLearnunit(i)
+        if(learnunit.date.getTime() === props.date.getTime())
+        {
+          //Tag von der Lernplanerstellung ausschließen
+          pruefung.excludedDays.push(props.date)
+        }
+      }
+    }
+    //Lernplan neu erstellen
+    createLearnPlan(pruefung)
+  }
+  else {
+    console.log('zugehörige Prüfung nicht gefunden')
+  }
+}
+
+function addLearnedTime (pruefung: Pruefung) {
+  const dateToday = new Date()
+  dateToday.setHours(23, 59, 59, 999)
+  const dateIterator = new Date(pruefung.start)
+  while(dateIterator.getTime() <= dateToday.getTime()) {
+    const isExcludedDay = pruefung.excludedDays.some(
+      (excludedDate) => new Date(excludedDate).toDateString() === dateIterator.toDateString()
+    );
+    if (!isExcludedDay) {
+      pruefung.learnedTime += props.lerndauer
+      pruefung.excludedDays.push(dateIterator)
+    }
+    dateIterator.setDate(dateIterator.getDate() + 1)
+  }
+}
+
 </script>
 
 
@@ -40,7 +91,7 @@ function startLearnunit() {
         <small>{{ lerndauer }} Minuten</small>
       </div>
       <div class="col-auto d-flex gap-2">
-        <button class="btn btn-danger">Löschen</button>
+        <button @click="deleteLearnunit" class="btn btn-danger">Löschen</button>
         <div @click="startLearnunit" class="btn btn-success">Start</div>
       </div>
     </div>
