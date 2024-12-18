@@ -9,43 +9,47 @@ defineComponent({
   name: 'ExamComponent',
 })
 
+// Löschen per Emit an ExamDay weitergeben
 const emit = defineEmits<{
   (event: 'examDeleted', name: string, examDate: Date): void
 }>()
 
 const props = defineProps<{
-  pruefung: string
-  zeitraumStart: Date
+  pruefung: string      // Name der Prüfung
+  zeitraumStart: Date   // Uhrzeit, zu der Prüfung beginnt
 }>()
 
 const pruefungenStore = usePruefungenStore()
 
+// Löschen per Emit an ExamDay weitergeben
 function deletePruefung() {
   emit('examDeleted', props.pruefung, props.zeitraumStart)
 }
 
 function editPruefung() {
+  // Suche passende Prüfung aus Store
   const pruefung = pruefungenStore.pruefungen.find(
     exam =>
       exam.name === props.pruefung &&
       exam.examDate.getTime() === props.zeitraumStart.getTime(), // Vergleiche beide Zeiten
   )
 
+  // Zusammenstellung URL-Parameter für HinzufuegenView
   if (pruefung) {
     const queryParams = {
-      fach: pruefung.name,
-      date: pruefung.examDate.toISOString(),
-      workload: pruefung.workload,
-      start: pruefung.start.toISOString(),
-      difficulty: pruefung.difficulty,
+      fach: pruefung.name,                    // Prüfungsname
+      date: pruefung.examDate.toISOString(),  // Datum der Prüfung mit Uhrzeit
+      workload: pruefung.workload,            // Aufwand in Stunden
+      start: pruefung.start.toISOString(),    // Startdatum zum Lernen
+      difficulty: pruefung.difficulty,        // Schwierigkeitsstufe der Prüfung
     }
 
+    // Wechsel zu HinzufuegenView
     router.push({ path: '/add', query: queryParams })
-  } else {
-    console.error('Prüfung nicht gefunden!')
   }
 }
 
+// Formatierung des Prüfungsdatums
 const zeitraum = computed(() => {
   return `${props.zeitraumStart.getHours().toString().padStart(2, '0')}:${props.zeitraumStart
     .getMinutes()
