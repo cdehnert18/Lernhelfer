@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, watch,reactive } from 'vue'
 import { useLearnUnitStore, type Learnunit } from './Learnunit'
 
 export interface Pruefung {
@@ -13,7 +13,7 @@ export interface Pruefung {
 }
 
 export const usePruefungenStore = defineStore('pruefungen', () => {
-  const pruefungen = ref<Pruefung[]>([])
+  const pruefungen = reactive<Pruefung[]>([])
 
   watch(
     pruefungen,
@@ -25,7 +25,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
 
   const loadFromLocalStorage = () => {
     const data = localStorage.getItem('pruefungen')
-    pruefungen.value = data
+    const parsedDate = data
       ? JSON.parse(data).map(
         (item: {
           name: string
@@ -45,11 +45,12 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
           excludedDays: item.excludedDays.map((date: string) => new Date(date)),
         }),
       )
-      : []
+      : [];
+    pruefungen.splice(0, pruefungen.length, ...parsedDate)
   }
 
   const addPruefung = (pruefung: Pruefung) => {
-    pruefungen.value.push(pruefung)
+    pruefungen.push(pruefung)
 
     // Generate Learunits here:
     // algorithmus erzeugt array von learnunits (newLearunits) (learnunit = {exam: pruefung(parameter aus Funktionskopf), date: Date, duration: number, done: false})
@@ -59,7 +60,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
   }
 
   const removePruefung = (index: number) => {
-    pruefungen.value.splice(index, 1)
+    pruefungen.splice(index, 1)
   }
 
   return {
