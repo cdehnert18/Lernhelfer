@@ -30,7 +30,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
         (item: {
           name: string
           examDate: string
-          effort: number
+          workload: number
           start: string
           difficulty: string
           buffer: number
@@ -38,7 +38,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
         }) => ({
           name: item.name,
           examDate: new Date(item.examDate),
-          effort: item.effort,
+          workload: item.workload,
           start: new Date(item.start),
           difficulty: item.difficulty,
           buffer: item.buffer,
@@ -56,7 +56,9 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
     // algorithmus erzeugt array von learnunits (newLearunits) (learnunit = {exam: pruefung(parameter aus Funktionskopf), date: Date, duration: number, done: false})
     // dann newLearunits.forEach(learnunit => useLearnUnitStore().addLearnunit(learnunit)) speichert alle learnunits in Pinia
     const newLearnUnits: Learnunit[] = initLearnPlan(pruefung)
-    newLearnUnits.forEach((learnunit) => useLearnUnitStore().addLearnunit(learnunit));
+    newLearnUnits.forEach(learnunit =>
+      useLearnUnitStore().addLearnunit(learnunit),
+    )
   }
 
   const removePruefung = (index: number) => {
@@ -79,40 +81,44 @@ const initLearnPlan = (pruefung: Pruefung) => {
   } else {
     pruefung.buffer = 6
   }
-  const newLearnunits = createLearnPlan(pruefung);
+  const newLearnunits = createLearnPlan(pruefung)
   return newLearnunits
-};
+}
 
 const createLearnPlan = (pruefung: Pruefung) => {
-  let amountDays;
-  let actualStartDate;
+  let amountDays
+  let actualStartDate
   if (pruefung.start.getTime() > Date.now()) {
-    amountDays = (pruefung.examDate.getTime() - pruefung.start.getTime()) / (1000 * 60 * 60 * 24) - pruefung.excludedDays.length;
+    amountDays =
+      (pruefung.examDate.getTime() - pruefung.start.getTime()) /
+        (1000 * 60 * 60 * 24) -
+      pruefung.excludedDays.length
     actualStartDate = pruefung.start
-  }
-  else {
-    amountDays = (pruefung.examDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24) - pruefung.excludedDays.length;
+  } else {
+    amountDays =
+      (pruefung.examDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24) -
+      pruefung.excludedDays.length
     actualStartDate = new Date(Date.now())
   }
-  if (pruefung.examDate.getHours() > 12)
-    amountDays++
+  if (pruefung.examDate.getHours() > 12) amountDays++
   const learningTime = Math.round((pruefung.workload / amountDays) * 60)
   const newLearnunits = []
   const currentDateIterator = actualStartDate
 
   while (currentDateIterator <= pruefung.examDate) {
     const isExcludedDay = pruefung.excludedDays.some(
-      (excludedDate) => new Date(excludedDate).toDateString() === currentDateIterator.toDateString()
-    );
+      excludedDate =>
+        new Date(excludedDate).toDateString() ===
+        currentDateIterator.toDateString(),
+    )
     if (!isExcludedDay) {
       newLearnunits.push({
         exam: pruefung,
         date: new Date(currentDateIterator),
         duration: learningTime,
-      });
+      })
     }
-    currentDateIterator.setDate(currentDateIterator.getDate() + 1);
+    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
   }
-  return newLearnunits;
-};
-
+  return newLearnunits
+}

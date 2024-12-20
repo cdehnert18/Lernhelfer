@@ -26,7 +26,6 @@ function startLearnunit() {
     router.push({ path: '/', query: queryParams })
   }
 }
-
 </script>
 
 
