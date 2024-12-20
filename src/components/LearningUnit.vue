@@ -47,6 +47,10 @@ function deleteLearnunit() {
       alert('Es muss mindestens eine Lerneinheit in der Zukunft für die Prüfung vorhanden sein')
       return
     } 
+    
+    //buffer benutzen
+    if (pruefung.buffer > 0)
+      pruefung.buffer -= props.lerndauer
 
     //Lerneinheiten löschen
     for (let i = learnunitStore.learnunits.length - 1; i >= 0; i--) {
@@ -66,6 +70,7 @@ function deleteLearnunit() {
 
     //gelernte Zeit dokumentieren
     addLearnedTime(pruefung)
+
     //Lernplan neu erstellen
     const newLearnUnits: Learnunit[] = createLearnPlan(pruefung)
     newLearnUnits.forEach((learnunit) => useLearnUnitStore().addLearnunit(learnunit))

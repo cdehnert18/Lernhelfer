@@ -127,8 +127,11 @@ export const createLearnPlan = (pruefung: Pruefung) => {
   }
   if (pruefung.examDate.getHours() >= 12)
     amountDays++
-  const learningTime = Math.round(((pruefung.workload + pruefung.buffer - pruefung.learnedTime) / amountDays) * 60)
-
+  let learningTime
+  if(pruefung.buffer > 0)
+    learningTime=Math.round(((pruefung.workload + pruefung.buffer - pruefung.learnedTime) / amountDays) * 60)
+  else
+    learningTime=Math.round((pruefung.workload - pruefung.learnedTime) / amountDays) * 60
   //Array von Lernunits erstellen
   const newLearnunits = []
   const currentDateIterator = new Date(actualStartDate)
