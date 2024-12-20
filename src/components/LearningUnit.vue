@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLearnUnitStore } from '@/stores/Learnunit'
+import { useLearnUnitStore, type Learnunit } from '@/stores/Learnunit'
 import { usePruefungenStore, createLearnPlan, type Pruefung } from '@/stores/Exam'
 import { useRouter } from 'vue-router'
 
@@ -36,15 +36,24 @@ function deleteLearnunit() {
   )
 
   if (pruefung) {
-    //gelernte Zeit dokumentieren
-    addLearnedTime(pruefung)
+    //check ob es von der Prüfung noch mindestens eine Lerneinheit ab heute gibt, die nicht gerade gelöscht wird
+    const learnunitCount = learnunitStore.learnunits.filter(
+      learnunit =>
+        learnunit.exam.name === pruefung.name &&
+        learnunit.date.getTime() >= new Date(new Date().setHours(0,0,0,0)).getTime() &&
+        learnunit.date.toISOString().split('T')[0] != props.date.toISOString().split('T')[0]
+    ).length
+    if (learnunitCount === 0) {
+      alert('Es muss mindestens eine Lerneinheit in der Zukunft für die Prüfung vorhanden sein')
+      return
+    } 
+
     //Lerneinheiten löschen
     for (let i = learnunitStore.learnunits.length - 1; i >= 0; i--) {
       const learnunit = learnunitStore.learnunits[i]
       if (
         learnunit.exam.name === pruefung.name &&
-        learnunit.exam.examDate.getTime() === pruefung.examDate.getTime() &&
-        learnunit.date.toISOString().split('T')[0] != Date.now().toString().split('T')[0]
+        learnunit.exam.examDate.toISOString().split('T')[0] === pruefung.examDate.toISOString().split('T')[0]
       ) {
         learnunitStore.removeLearnunit(i)
         if(learnunit.date.getTime() === props.date.getTime())
@@ -54,8 +63,12 @@ function deleteLearnunit() {
         }
       }
     }
+
+    //gelernte Zeit dokumentieren
+    addLearnedTime(pruefung)
     //Lernplan neu erstellen
-    createLearnPlan(pruefung)
+    const newLearnUnits: Learnunit[] = createLearnPlan(pruefung)
+    newLearnUnits.forEach((learnunit) => useLearnUnitStore().addLearnunit(learnunit))
   }
   else {
     console.log('zugehörige Prüfung nicht gefunden')
@@ -64,15 +77,16 @@ function deleteLearnunit() {
 
 function addLearnedTime (pruefung: Pruefung) {
   const dateToday = new Date()
-  dateToday.setHours(23, 59, 59, 999)
+  dateToday.setHours(0,0,0,0)
   const dateIterator = new Date(pruefung.start)
-  while(dateIterator.getTime() <= dateToday.getTime()) {
+  while(dateIterator.getTime() < dateToday.getTime()) {
     const isExcludedDay = pruefung.excludedDays.some(
       (excludedDate) => new Date(excludedDate).toDateString() === dateIterator.toDateString()
     );
     if (!isExcludedDay) {
-      pruefung.learnedTime += props.lerndauer
-      pruefung.excludedDays.push(dateIterator)
+      pruefung.learnedTime += (props.lerndauer) / 60
+      pruefung.excludedDays.push(new Date(dateIterator))
+      storePruefung.updatePruefung(pruefung)
     }
     dateIterator.setDate(dateIterator.getDate() + 1)
   }

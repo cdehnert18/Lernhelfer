@@ -65,11 +65,19 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
     pruefungen.value.splice(index, 1)
   }
 
+  const updatePruefung = (pruefung: Pruefung) => {
+    const index = pruefungen.value.findIndex(
+      (item) => item.name === pruefung.name && item.examDate === pruefung.examDate
+    )
+    pruefungen.value[index] = pruefung
+  }
+
   return {
     pruefungen,
     loadFromLocalStorage,
     addPruefung,
     removePruefung,
+    updatePruefung,
   }
 })
 
@@ -89,43 +97,41 @@ export const createLearnPlan = (pruefung: Pruefung) => {
   let amountDays;
   let actualStartDate;
   const examDate = new Date(pruefung.examDate)
-  examDate.setHours(0, 0, 0, 0)
+  examDate.setHours(12, 0, 0, 0)
   const startDate = new Date(pruefung.start)
-  startDate.setHours(0, 0, 0, 0)
+  startDate.setHours(12, 0, 0, 0)
 
-  // Anzahl an zukünftigen excludedDays ab morgen
+  // Anzahl an zukünftigen excludedDays berechnen
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setHours(12, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
   const amountFutureExcludedDays = pruefung.excludedDays.filter(
     (excludedDate) => {
       const excludedDay = new Date(excludedDate);
-      excludedDay.setHours(0, 0, 0, 0);
-      return excludedDay.getTime() >= tomorrow.getTime();
+      excludedDay.setHours(12, 0, 0, 0);
+      return excludedDay.getTime() >= today.getTime();
     }
   ).length;
 
   //Lernzeit pro Tag berechnen
-  if (startDate.getTime() > Date.now()) {
-    actualStartDate = pruefung.start
+  if ((startDate.getTime() > today.getTime())) {
+    actualStartDate = new Date(pruefung.start)
     amountDays = (examDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) - amountFutureExcludedDays;
   }
   else {
     const dateToday = new Date(Date.now())
-    dateToday.setHours(0, 0, 0, 0)
+    dateToday.setHours(12, 0, 0, 0)
     actualStartDate = new Date(dateToday)
-    //erst ab morgigen Tag neue Lernunits erstellen
-    actualStartDate.setDate(dateToday.getDate() + 1)
     amountDays = (examDate.getTime() - actualStartDate.getTime()) / (1000 * 60 * 60 * 24) - amountFutureExcludedDays;
   }
-  if (pruefung.examDate.getHours() > 12)
+  if (pruefung.examDate.getHours() >= 12)
     amountDays++
   const learningTime = Math.round(((pruefung.workload + pruefung.buffer - pruefung.learnedTime) / amountDays) * 60)
 
   //Array von Lernunits erstellen
   const newLearnunits = []
-  const currentDateIterator = actualStartDate
+  const currentDateIterator = new Date(actualStartDate)
   while (currentDateIterator <= pruefung.examDate) {
     if (currentDateIterator.toDateString() === pruefung.examDate.toDateString() && pruefung.examDate.getHours() < 12)
       break;
