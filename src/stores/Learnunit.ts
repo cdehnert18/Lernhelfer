@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, watch,reactive } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
 import type { Pruefung } from '@/stores/Exam'
 
@@ -10,7 +10,7 @@ export interface Learnunit {
 }
 
 export const useLearnUnitStore = defineStore('learnunit', () => {
-  const learnunits = ref<Learnunit[]>([])
+  const learnunits = reactive<Learnunit[]>([])
 
   watch(
     learnunits,
@@ -26,34 +26,35 @@ export const useLearnUnitStore = defineStore('learnunit', () => {
   )
 
   const loadFromLocalStorage = () => {
-    const data = localStorage.getItem('learnunits')
-    learnunits.value = data
+    const data = localStorage.getItem('learnunits');
+    const parsedData = data
       ? JSON.parse(data).map((item: { examName: string; date: string; duration: number; done: boolean }) => {
-        const exam = usePruefungenStore().pruefungen.find(p => p.name === item.examName)
-        if (!exam) {
-          throw new Error(`Prüfung mit dem Namen ${item.examName} nicht gefunden.`)
-        }
-
-        return {
-          exam: exam,
-          date: new Date(item.date),
-          duration: item.duration,
-        }
-      })
-      : []
-  }
+          const exam = usePruefungenStore().pruefungen.find(p => p.name === item.examName);
+          if (!exam) {
+            throw new Error(`Prüfung mit dem Namen ${item.examName} nicht gefunden.`);
+          }
+  
+          return {
+            exam: exam,
+            date: new Date(item.date),
+            duration: item.duration,
+          };
+        })
+      : [];
+    learnunits.splice(0, learnunits.length, ...parsedData);
+  };
 
 
   const addLearnunit = (learnunit: Learnunit) => {
-    learnunits.value.push(learnunit)
+    learnunits.push(learnunit)
   }
 
   const removeLearnunit = (index: number) => {
-    learnunits.value.splice(index, 1)
+    learnunits.splice(index, 1)
   }
   
   const completeLearnunit = (learnunit: Learnunit) => {
-    const index = learnunits.value.findIndex(unit => unit === learnunit)
+    const index = learnunits.findIndex(unit => unit === learnunit)
     if (index === -1) {
       throw new Error('Learnunit nicht gefunden.')
     }

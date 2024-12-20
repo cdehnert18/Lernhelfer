@@ -1,0 +1,5 @@
+- Exam -> Komponente zum Anzeigen einer Prüfung
+- ExamDay -> Komponente zum Anzeigen eines Prüfungtages (beinhaltet mehrere Prüfungen)
+- Learnunit -> Komponente zum Anzeigen eines Lernblocks
+- LearnDay -> Komponente zum Anzeigen eines Lerntages (beinhaltet mehrere Lernblöcke)
+- Navigation -> Komponente zum Wechseln zwischen Views
