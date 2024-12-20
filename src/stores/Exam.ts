@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch,reactive } from 'vue'
+import { watch, reactive } from 'vue'
 import { useLearnUnitStore, type Learnunit } from './Learnunit'
 
 export interface Pruefung {
@@ -27,25 +27,27 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
     const data = localStorage.getItem('pruefungen')
     const parsedDate = data
       ? JSON.parse(data).map(
-        (item: {
-          name: string
-          examDate: string
-          workload: number
-          start: string
-          difficulty: string
-          buffer: number
-          excludedDays: string[]
-        }) => ({
-          name: item.name,
-          examDate: new Date(item.examDate),
-          workload: item.workload,
-          start: new Date(item.start),
-          difficulty: item.difficulty,
-          buffer: item.buffer,
-          excludedDays: item.excludedDays.map((date: string) => new Date(date)),
-        }),
-      )
-      : [];
+          (item: {
+            name: string
+            examDate: string
+            workload: number
+            start: string
+            difficulty: string
+            buffer: number
+            excludedDays: string[]
+          }) => ({
+            name: item.name,
+            examDate: new Date(item.examDate),
+            workload: item.workload,
+            start: new Date(item.start),
+            difficulty: item.difficulty,
+            buffer: item.buffer,
+            excludedDays: item.excludedDays.map(
+              (date: string) => new Date(date),
+            ),
+          }),
+        )
+      : []
     pruefungen.splice(0, pruefungen.length, ...parsedDate)
   }
 
