@@ -10,16 +10,18 @@ const learnunitStore = useLearnUnitStore()
 
 const aktuellesDatum = new Date()
 
-// true, wenn eine völlig neue Prüfung erstellt wird
-// false, wenn eine bestehende Prüfung bearbeitet wird
+// Gibt an, ob eine neue Prüfung erstellt wird (true) oder
+// eine bestehende Prüfung bearbeitet wird (false)
 const isNew = ref(true)
 
+// Formulardaten mit Standardwerten
 const formData = ref({
-  name: '',
-  examDate: '',
-  workload: '',
-  start: (aktuellesDatum.toISOString() as string).split('T')[0],
-  difficulty: 'leicht',
+  name: '',                                                       // Name der Prüfung
+  examDate: '',                                                   // Datum der Prüfung
+  examTime: '',                                                   // Uhrzeit der Prüfung
+  workload: '',                                                   // geschätzter Aufwand zur Vorbereitung in Stunden
+  start: (aktuellesDatum.toISOString() as string).split('T')[0],  // Datum, ab dem gelernt werden kann
+  difficulty: 'leicht',                                           // Schwierigkeit der Prüfung
 })
 
 // Initialisierung der Eingabefelder, wenn alle Parameter der URL existieren
@@ -27,14 +29,16 @@ function initializeFormData(query: Record<string, unknown>) {
   if (
     query.fach &&
     query.date &&
-    query.effort &&
+    query.workload &&
     query.start &&
     query.difficulty
   ) {
     return {
+      // Übernahme aller Parameter in das Formular
       name: query.fach as string,
-      examDate: (query.date as string).split('.')[0],
-      workload: query.effort as string,
+      examDate: (query.date as string).split('T')[0],
+      examTime: (query.date as string).split('T')[1]?.slice(0, 5),
+      workload: query.workload as string,
       start: (query.start as string).split('T')[0],
       difficulty: query.difficulty as string,
     }
@@ -42,16 +46,18 @@ function initializeFormData(query: Record<string, unknown>) {
   return null
 }
 
-// Initialisiert wenn möglich die EIngabefelder
+// Initialisiert der Eingabefelder (wenn möglich)
 onMounted(() => {
   const query = router.currentRoute.value.query
   const initializedData = initializeFormData(query)
   if (initializedData) {
-    formData.value = initializedData
-    isNew.value = false
+    formData.value = initializedData    // Setzten der Parameter aus URL
+    isNew.value = false                 // isNew = false, da bestehende Prüfung bearbeitet wird
   }
 })
 
+// Speichern der eingetragenen Werte als Prüfung,
+// wenn kein Feld leer ist
 function save() {
   if (
     !formData.value.name ||
@@ -63,9 +69,15 @@ function save() {
     return
   }
 
+  // Kombiniere Tag und Uhrzeit der Prüfung zu einer Variable
+  const [hours, minutes] = formData.value.examTime.split(':')
+  const examDateWithTime = new Date(formData.value.examDate)
+  examDateWithTime.setHours(parseInt(hours, 10), parseInt(minutes, 10))
+
+  // Extrahieren der Fom-Werte in Prüfung
   const neuePruefung: Pruefung = {
     name: formData.value.name,
-    examDate: new Date(formData.value.examDate),
+    examDate: examDateWithTime,
     workload: parseInt(formData.value.workload),
     start: new Date(formData.value.start),
     difficulty: formData.value.difficulty,
@@ -73,7 +85,9 @@ function save() {
     excludedDays: [],
     learnedTime: 0,
   }
-  // Wenn eine bestehende Prüfung gearbeitet wurde: Löschung der alten Prüfung
+  // Wenn eine bestehende Prüfung gearbeitet wurde:
+  // - Suche und Löschung der alten Prüfung
+  // - Speicherung der neuen Prüfung
   if (!isNew.value) {
     const index = store.pruefungen.findIndex(
       pruefung =>
@@ -110,6 +124,7 @@ function save() {
   <form class="container flex-grow-1" @submit.prevent="save">
     <h2 v-if="isNew" class="my-2">Neue Prüfung anlegen</h2>
     <h2 v-else class="my-2">Bestehende Prüfung bearbeiten</h2>
+    <!--Name der Prüfung-->
     <div class="my-3">
       <label for="inputName" class="form-label">Fach</label>
       <input
@@ -121,20 +136,33 @@ function save() {
       />
     </div>
 
+    <!--Datum der Prüfung-->
     <div class="mb-3">
-      <label for="inputDate" class="form-label">Datum</label>
+      <label for="inputDate" class="form-label">Prüfungsdatum</label>
       <input
         id="inputDate"
         class="form-control"
-        type="datetime-local"
+        type="date"
         v-model="formData.examDate"
       />
     </div>
 
+    <!--Uhrzeit der Prüfung-->
     <div class="mb-3">
-      <label for="inputEffort" class="form-label">Aufwand in Stunden</label>
+      <label for="inputTime" class="form-label">Prüfungsuhrzeit</label>
       <input
-        id="inputEffort"
+        id="inputTime"
+        class="form-control"
+        type="time"
+        v-model="formData.examTime"
+      />
+    </div>
+
+    <!--geschätzter Aufwand zur Vorbereitung in Stunden-->
+    <div class="mb-3">
+      <label for="inputWorkload" class="form-label">Aufwand in Stunden</label>
+      <input
+        id="inputWorkload"
         class="form-control"
         type="number"
         v-model="formData.workload"
@@ -142,6 +170,7 @@ function save() {
       />
     </div>
 
+    <!--Datum, ab dem gelernt werden kann-->
     <div class="mb-3">
       <label for="inputStart" class="form-label">Lernbeginn</label>
       <input
@@ -152,6 +181,7 @@ function save() {
       />
     </div>
 
+    <!--Schwierigeit der Prüfung-->
     <div class="mb-3">
       <label for="inputDifficulty" class="form-label">Schwierigkeitsgrad</label>
       <select

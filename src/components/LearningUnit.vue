@@ -96,7 +96,6 @@ function addLearnedTime (pruefung: Pruefung) {
     dateIterator.setDate(dateIterator.getDate() + 1)
   }
 }
-
 </script>
 
 

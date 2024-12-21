@@ -14,11 +14,13 @@ const groupedPruefungen = computed(() => {
     (acc, pruefung) => {
       const datum = new Date(pruefung.examDate.toISOString().split('T')[0])
 
+      // Suche Prüfungen am selben Tag
       const existingEntry = acc.find(
         entry => entry.datum.getTime() === datum.getTime(),
       )
 
       if (existingEntry) {
+        // Füge Prüfungen am selben Tag zusammen
         existingEntry.pruefungen.push(pruefung)
       } else {
         acc.push({
@@ -28,12 +30,15 @@ const groupedPruefungen = computed(() => {
       }
       return acc
     },
+    // Array, dass alle Prüfungstage und
+    // an diesem Tag stattfindende Prüfungen enthält
     [] as { datum: Date; pruefungen: typeof storePruefung.pruefungen }[],
   )
 })
 
 // Löschen einer Prüfung & Löschen der Lerneinheiten
 function handleExamDeleted(name: string, examDate: Date) {
+  // Suche Prüfung am selben Tag mit demselben Namen
   const index = storePruefung.pruefungen.findIndex(
     pruefung =>
       pruefung.name === name &&
@@ -44,30 +49,30 @@ function handleExamDeleted(name: string, examDate: Date) {
     // Rückwärts iterieren, damit sich die Indizes nicht verschieben
     for (let i = storeLearnunit.learnunits.length - 1; i >= 0; i--) {
       const learnunit = storeLearnunit.learnunits[i]
+      // Löschen der Lerneinheiten mit passender zugehöriger Prüfung
       if (
         learnunit.exam.name === name &&
         learnunit.exam.examDate.getTime() === examDate.getTime()
       ) {
         storeLearnunit.removeLearnunit(i)
-      } else {
-        console.log(
-          learnunit.exam.examDate.getTime() + ' VS ' + examDate.getTime(),
-        )
       }
     }
-    storePruefung.removePruefung(index) // Methode aus dem Store nutzen
+    // Prüfung löschen
+    storePruefung.removePruefung(index)
   }
 }
 </script>
 
 <template>
   <div>
+    <!--alle Prüfungstage anzeigen-->
     <ExamDay
       v-for="(pruefungstag, index) in groupedPruefungen"
       :key="index"
       :pruefungen="pruefungstag.pruefungen"
       @examDeleted="handleExamDeleted"
     />
+    <!--falls es keine Tage mit Prüfungen gibt-->
     <Placeholder v-if="groupedPruefungen.length === 0">
       Hier werden Prüfungen angezeigt, die du erstellt hast
     </Placeholder>

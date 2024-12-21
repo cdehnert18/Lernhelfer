@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { watch, reactive } from 'vue'
 import { useLearnUnitStore, type Learnunit } from './Learnunit'
 
 export interface Pruefung {
@@ -14,7 +14,7 @@ export interface Pruefung {
 }
 
 export const usePruefungenStore = defineStore('pruefungen', () => {
-  const pruefungen = ref<Pruefung[]>([])
+  const pruefungen = reactive<Pruefung[]>([])
 
   watch(
     pruefungen,
@@ -26,7 +26,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
 
   const loadFromLocalStorage = () => {
     const data = localStorage.getItem('pruefungen')
-    pruefungen.value = data
+    const parsedDate = data
       ? JSON.parse(data).map(
         (item: {
           name: string
@@ -44,11 +44,14 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
           start: new Date(item.start),
           difficulty: item.difficulty,
           buffer: item.buffer,
-          excludedDays: item.excludedDays.map((date: string) => new Date(date)),
+          excludedDays: item.excludedDays.map(
+              (date: string) => new Date(date),
+            ),
           learnedTime: item.learnedTime,
         }),
       )
       : []
+    pruefungen.splice(0, pruefungen.length, ...parsedDate)
   }
 
   const addPruefung = (pruefung: Pruefung, isNew: boolean) => {
@@ -66,7 +69,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
   }
 
   const removePruefung = (index: number) => {
-    pruefungen.value.splice(index, 1)
+    pruefungen.splice(index, 1)
   }
 
   const updatePruefung = (pruefung: Pruefung) => {
@@ -93,9 +96,9 @@ const initLearnPlan = (pruefung: Pruefung) => {
   } else {
     pruefung.buffer = 6
   }
-  const newLearnunits = createLearnPlan(pruefung);
+  const newLearnunits = createLearnPlan(pruefung)
   return newLearnunits
-};
+}
 
 export const createLearnPlan = (pruefung: Pruefung) => {
   let amountDays;
@@ -143,16 +146,18 @@ export const createLearnPlan = (pruefung: Pruefung) => {
     if (currentDateIterator.toDateString() === pruefung.examDate.toDateString() && pruefung.examDate.getHours() < 12)
       break;
     const isExcludedDay = pruefung.excludedDays.some(
-      (excludedDate) => new Date(excludedDate).toDateString() === currentDateIterator.toDateString()
-    );
+      excludedDate =>
+        new Date(excludedDate).toDateString() ===
+        currentDateIterator.toDateString(),
+    )
     if (!isExcludedDay) {
       newLearnunits.push({
         exam: pruefung,
         date: new Date(currentDateIterator),
         duration: learningTime,
-      });
+      })
     }
-    currentDateIterator.setDate(currentDateIterator.getDate() + 1);
+    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
   }
-  return newLearnunits;
-};
+  return newLearnunits
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue'
+import { watch, ref } from 'vue'
 import Exam from '@/components/Exam.vue'
+import { useWochentag } from '@/composables/useWochentag'
 
 const emit = defineEmits<{
   (event: 'examDeleted', name: string, examDate: Date): void
@@ -33,19 +34,7 @@ function onExamDeleted(fach: string, date: Date) {
   )
 }
 
-const wochentag = computed(() => {
-  const wochentage = [
-    'Sonntag',
-    'Montag',
-    'Dienstag',
-    'Mittwoch',
-    'Donnerstag',
-    'Freitag',
-    'Samstag',
-  ]
-  const dayIndex = props.pruefungen[0].examDate.getDay()
-  return wochentage[dayIndex]
-})
+const { wochentag } = useWochentag(pruefungen.value[0].examDate)
 </script>
 
 <template>

@@ -1,26 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import LearningUnit from '@/components/LearningUnit.vue'
-import type { Learnunit } from '@/stores/Learnunit';
+import type { Learnunit } from '@/stores/Learnunit'
+import { useWochentag } from '@/composables/useWochentag'
 
 const props = defineProps<{
   datum: Date
   lerneinheiten: Learnunit[]
 }>()
-
-const wochentag = computed(() => {
-  const wochentage = [
-    'Sonntag',
-    'Montag',
-    'Dienstag',
-    'Mittwoch',
-    'Donnerstag',
-    'Freitag',
-    'Samstag',
-  ]
-  const dayIndex = props.datum.getDay()
-  return wochentage[dayIndex]
-})
+const { wochentag } = useWochentag(props.datum)
 </script>
 
 <template>
