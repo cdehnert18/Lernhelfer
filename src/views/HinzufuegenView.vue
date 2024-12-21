@@ -2,8 +2,11 @@
 import router from '@/router'
 import { ref, onMounted } from 'vue'
 import { usePruefungenStore } from '@/stores/Exam'
+import { useLearnUnitStore } from '@/stores/Learnunit'
 
 const store = usePruefungenStore()
+const learnunitStore = useLearnUnitStore()
+
 
 const aktuellesDatum = new Date()
 
@@ -59,7 +62,18 @@ function save() {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
-  const neuePruefung = {
+  interface Pruefung {
+    name: string;
+    examDate: Date;
+    workload: number;
+    start: Date;
+    difficulty: string;
+    buffer: number;
+    excludedDays: Date[];
+    learnedTime: number;
+  }
+  
+  const neuePruefung: Pruefung = {
     name: formData.value.name,
     examDate: new Date(formData.value.examDate),
     workload: parseInt(formData.value.workload),
@@ -78,10 +92,26 @@ function save() {
           router.currentRoute.value.query.date,
     )
     if (index > -1) {
+      // Buffer, ausgeschlossene Tage und gelernte Zeit von alter Prüfung übernehmen
+      const altePruefung = store.pruefungen[index]
+      neuePruefung.buffer = altePruefung.buffer
+      neuePruefung.excludedDays = altePruefung.excludedDays
+      neuePruefung.learnedTime = altePruefung.learnedTime
       store.removePruefung(index)
     }
+
+    // alte Lerneinheiten löschen
+    for (let i = learnunitStore.learnunits.length - 1; i >= 0; i--) {
+      const learnunit = learnunitStore.learnunits[i]
+      if (
+        learnunit.exam.name === router.currentRoute.value.query.fach &&
+        learnunit.exam.examDate.toISOString() === router.currentRoute.value.query.date
+      ) {
+        learnunitStore.removeLearnunit(i)
+      }
+    }
   }
-  store.addPruefung(neuePruefung)
+  store.addPruefung(neuePruefung, isNew.value)
   router.push('/pruefung')
 }
 </script>

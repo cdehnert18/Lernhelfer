@@ -51,13 +51,17 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
       : []
   }
 
-  const addPruefung = (pruefung: Pruefung) => {
+  const addPruefung = (pruefung: Pruefung, isNew: boolean) => {
     pruefungen.value.push(pruefung)
 
     // Generate Learunits here:
     // algorithmus erzeugt array von learnunits (newLearunits) (learnunit = {exam: pruefung(parameter aus Funktionskopf), date: Date, duration: number, done: false})
     // dann newLearunits.forEach(learnunit => useLearnUnitStore().addLearnunit(learnunit)) speichert alle learnunits in Pinia
-    const newLearnUnits: Learnunit[] = initLearnPlan(pruefung)
+    let newLearnUnits: Learnunit[]
+    if(isNew) 
+      newLearnUnits= initLearnPlan(pruefung)
+    else
+      newLearnUnits = createLearnPlan(pruefung)
     newLearnUnits.forEach((learnunit) => useLearnUnitStore().addLearnunit(learnunit));
   }
 
@@ -131,7 +135,7 @@ export const createLearnPlan = (pruefung: Pruefung) => {
   if(pruefung.buffer > 0)
     learningTime=Math.round(((pruefung.workload + pruefung.buffer - pruefung.learnedTime) / amountDays) * 60)
   else
-    learningTime=Math.round((pruefung.workload - pruefung.learnedTime) / amountDays) * 60
+    learningTime=Math.round(((pruefung.workload - pruefung.learnedTime) / amountDays) * 60) 
   //Array von Lernunits erstellen
   const newLearnunits = []
   const currentDateIterator = new Date(actualStartDate)
@@ -152,7 +156,3 @@ export const createLearnPlan = (pruefung: Pruefung) => {
   }
   return newLearnunits;
 };
-
-//Plan: bei Lernunit löschen aktuelle learningTime für alle Tage in Vergangenheit, die nicht exkludiert sind auf learnedTime addieren
-// dann Tage zu exkludierten Tagen hinzufügen
-// dann alle Lernunits von Prüfung löschen, außer heutige Lernunit, dann neue Lernunits ab morgen erstellen

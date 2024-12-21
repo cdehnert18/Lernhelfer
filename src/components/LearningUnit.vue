@@ -50,7 +50,7 @@ function deleteLearnunit() {
     
     //buffer benutzen
     if (pruefung.buffer > 0)
-      pruefung.buffer -= props.lerndauer
+      pruefung.buffer -= (props.lerndauer / 60)
 
     //Lerneinheiten löschen
     for (let i = learnunitStore.learnunits.length - 1; i >= 0; i--) {
