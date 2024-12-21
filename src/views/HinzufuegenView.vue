@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { ref, onMounted } from 'vue'
-import { usePruefungenStore } from '@/stores/Exam'
+import { usePruefungenStore, type Pruefung } from '@/stores/Exam'
 import { useLearnUnitStore } from '@/stores/Learnunit'
 
 const store = usePruefungenStore()
@@ -62,17 +62,7 @@ function save() {
     alert('Bitte füllen Sie alle erforderlichen Felder aus.')
     return
   }
-  interface Pruefung {
-    name: string;
-    examDate: Date;
-    workload: number;
-    start: Date;
-    difficulty: string;
-    buffer: number;
-    excludedDays: Date[];
-    learnedTime: number;
-  }
-  
+
   const neuePruefung: Pruefung = {
     name: formData.value.name,
     examDate: new Date(formData.value.examDate),
