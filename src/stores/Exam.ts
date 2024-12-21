@@ -55,7 +55,7 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
   }
 
   const addPruefung = (pruefung: Pruefung, isNew: boolean) => {
-    pruefungen.value.push(pruefung)
+    pruefungen.push(pruefung)
 
     // Generate Learunits here:
     // algorithmus erzeugt array von learnunits (newLearunits) (learnunit = {exam: pruefung(parameter aus Funktionskopf), date: Date, duration: number, done: false})
@@ -73,10 +73,10 @@ export const usePruefungenStore = defineStore('pruefungen', () => {
   }
 
   const updatePruefung = (pruefung: Pruefung) => {
-    const index = pruefungen.value.findIndex(
+    const index = pruefungen.findIndex(
       (item) => item.name === pruefung.name && item.examDate === pruefung.examDate
     )
-    pruefungen.value[index] = pruefung
+    pruefungen[index] = pruefung
   }
 
   return {
